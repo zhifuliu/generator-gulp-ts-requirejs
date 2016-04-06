@@ -1,4 +1,7 @@
+# Outer ignore rules: /Users/zhifu/.gitignore_global
+*~
 .DS_Store
+
 .idea/
 dist/
 node_modules/
