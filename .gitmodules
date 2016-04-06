@@ -1,0 +1,7 @@
+[submodules "zhifu-blog"]
+    path = src/bower_modules/zhifu-blog
+    url = git@gitlab.com:zhifu.liu/zhifu-blog.git
+
+[submodules "collect-front"]
+    path = src/bower_modules/collect-front
+    url = git@gitlab.com:zhifu.liu/collect-front.git
