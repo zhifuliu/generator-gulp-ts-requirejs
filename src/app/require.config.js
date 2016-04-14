@@ -3,7 +3,7 @@ var require = {
     baseUrl: '.',
     paths: {
         "bootstrap": "../bower_modules/dist/js/bootstrap.min",
-        "jquery": "../bower_modules/jquery/jquery.min",
+        "jquery":    "../bower_modules/jquery/dist/jquery",
         "requirejs": "../bower_modules/requirejs/require"
     }
 }
