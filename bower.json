@@ -22,8 +22,7 @@
   "dependencies": {
     "bootstrap": "^3.3.6",
     "requirejs": "^2.2.0",
-    "jquery": "1.11.2"
-  },
-  "resolutions": {
+    "jquery": "1.11.2",
+    "angular": "^1.5.4"
   }
 }
