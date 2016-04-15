@@ -14,8 +14,8 @@
 
     <!-- build:js -->
     <script src="./app/require.config.js"></script>
-    <!--<script data-main="./app/startup" src="./bower_modules/requirejs/require.js"></script>-->
-    <script src="./bower_modules/requirejs/require.js"></script>
+    <script data-main="./app/startup" src="./bower_modules/requirejs/require.js"></script>
+    <<!--script src="./bower_modules/requirejs/require.js"></script>-->
     <!-- endbuild -->
 </head>
 
@@ -34,11 +34,11 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li class="active"><a onclick="app.clickList('home');" href="#">Home</a></li>
-                <li><a onclick="clickList('about');" href="#about">About</a></li>
-                <li><a onclick="clickList('contact');" href="#contact">Contact</a></li>
+                <li class="active"><a id="clickListHome" href="#">Home</a></li>
+                <li><a id="clickListAbout" href="#about">About</a></li>
+                <li><a id="clickListContact" href="#contact">Contact</a></li>
             </ul>
-        </div><!--/.nav-collapse -->
+        </div>
     </div>
 </nav>
 
@@ -49,7 +49,7 @@
     </div>
 
     <div>
-        <input type="button" onclick="clickBtn()" value="点击数字加一"><br>
+        <input type="button" id="clickBtnAddOne" value="点击数字加一"><br>
         <input type="text" id="msg">
     </div>
 </div>
@@ -58,13 +58,19 @@
     //var a = require('./app/startup');
     //var a = new Application();
 
-    var clickList,clickBtn;
+    /*var clickList,clickBtn;
     require(['./app/startup'], function (app) {
         console.log('hello');
         console.log(app.clickNum);
         clickList = app.clickList;
         clickBtn = app.clickBtn;
-    });
+    });*/
+
+    // 对于用 requireJs 的使用思想,其实并不是在html中用onclick 等来声明事件处理程序,而是将 html 和逻辑分离,也许就是在 require 中用dom操作来绑定各种事件处理程序
+    // 在之前的项目经验中,使用的时 knockoutJS 来坐双向绑定,并没有在 html 中用onclick 来绑定事件
+
+    // 实验:在index中用ID或者class 来标示元素,在 startup.ts 中进行DOM操作
+    // 实验成功,还有意外收获,就是 ts 中app 的方法书写方法,用箭头函数正常,使用function(){},那么绑定的时候会改变函数的运行作用域
 </script>
 </body>
 </html>
