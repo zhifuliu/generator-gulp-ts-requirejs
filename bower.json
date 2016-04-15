@@ -6,7 +6,9 @@
     "typescript",
     "ts",
     "requireJs",
-    "gulp"
+    "gulp",
+    "knockout",
+    "angular"
   ],
   "main": "",
   "moduleType": [
@@ -17,14 +19,6 @@
     "zhifuliu"
   ],
   "license": "MIT",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "./src/bower_modules",
-    "test",
-    "tests"
-  ],
   "dependencies": {
     "bootstrap": "^3.3.6",
     "requirejs": "^2.2.0",

@@ -17,5 +17,4 @@ class Application {
 }
 
 var app = new Application();
-ko.applyBindings(app);
 export = app;
