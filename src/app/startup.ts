@@ -1,20 +1,14 @@
 /// <reference path="../references.d.ts" />
 
 import $ = require("jquery");
+//import ng = require('angular');
+import ng = require('angular');
 
 class Application {
-    constructor() {
 
-    }
-    public clickNum: number = 0;
-    public clickAddOne = () => {
-        $('#msg').val((this.clickNum++).toString());
-        console.log(this.clickNum)
-    }
-    public clickMenu = menuName => {
-        console.log(menuName);
-    }
 }
-
+//console.log(ng);
 var app = new Application();
+//ng.module('ngAppTs', []);
+
 export = app;

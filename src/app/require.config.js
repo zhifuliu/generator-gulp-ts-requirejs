@@ -5,6 +5,6 @@ var require = {
         "bootstrap":    "../bower_modules/dist/js/bootstrap.min",
         "jquery":       "../bower_modules/jquery/dist/jquery",
         "requirejs":    "../bower_modules/requirejs/require",
-        "angular":      "../bower_midules/angular/angular.min"
+        "angular":      "../bower_modules/angular/angular"
     }
 }
