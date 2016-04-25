@@ -1,0 +1,28 @@
+{
+  "name": "generator-gulp-ts-requireJs",
+  "homepage": "https://github.com/zhifuliu/generator-gulp-ts-requirejs",
+  "description": "根据 requireJs, typescript, gulp 官方文档等来一步一步搭建自己的前端工程，搭建完这一步后，然后会分两个分支来分别做 knockout 和 angular 的工程",
+  "keywords": [
+    "typescript",
+    "ts",
+    "requireJs",
+    "gulp",
+    "knockout",
+    "angular"
+  ],
+  "main": "",
+  "moduleType": [
+    "amd",
+    "node"
+  ],
+  "authors": [
+    "zhifuliu"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "^3.3.6",
+    "requirejs": "^2.2.0",
+    "jquery": "1.11.2",
+    "angular": "^1.5.4"
+  }
+}
