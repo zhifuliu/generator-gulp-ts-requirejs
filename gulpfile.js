@@ -8,6 +8,8 @@ var pkg = require('./package');
 var del = require('del');
 var _ = require('lodash');
 
+var typescript = require('gulp-tsc');
+
 // optimize images and put them in the dist folder
 gulp.task('images', function() {
   return gulp.src(config.images)
@@ -134,7 +136,7 @@ gulp.task('jshint', function() {
 gulp.task('default', ['serve']); //
 
 //run the server after having built generated files, and watch for changes
-gulp.task('serve', ['build'], function() {
+gulp.task('serve', ['auto-ts', 'build'], function() {
   browserSync({
     port: config.port,
     ui: {
@@ -169,7 +171,7 @@ gulp.task('serve:dist', ['build:dist'], function() {
 
 // 为了结合 ts ，写的task
 gulp.task('ts', function() {
-    return gulp.src(['**/*.ts'])
+    return gulp.src(['./client/**/*.ts', './server/**/*.ts'])
         .pipe(typescript({
             module: 'amd',
             sourcemaps: true,
@@ -179,7 +181,7 @@ gulp.task('ts', function() {
         .pipe(gulp.dest('./'));
 });
 gulp.task('auto-ts', ['ts'], function() {
-    gulp.watch('**/*.ts', function() {
+    gulp.watch(['./client/**/*.ts', './server/**/*.ts'], function() {
         gulp.src(['**/*.ts'])
             .pipe(typescript({
                 module: 'amd',
