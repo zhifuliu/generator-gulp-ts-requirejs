@@ -24,7 +24,7 @@ module.run(["$templateCache", function($templateCache) {
     "  <div class=\"container-fluid\">\n" +
     "    <div class=\"navbar-header\">\n" +
     "      <a class=\"navbar-brand\" ui-sref=\"root.mgt.orders({status: 0})\">\n" +
-    "        微易车险管理系统\n" +
+    "        {{header.userInfo.user.company.name}}车险管理系统\n" +
     "      </a>\n" +
     "    </div>\n" +
     "    <div>\n" +
@@ -136,6 +136,41 @@ try { module = angular.module("templates"); }
 catch(err) { module = angular.module("templates", []); }
 module.run(["$templateCache", function($templateCache) {
   "use strict";
+  $templateCache.put("src/app/welcome/welcome.tpl.html",
+    "<!-- 检查登录状态中 -->\n" +
+    "<div class=\"well welcome-msg\">\n" +
+    "    <h4>欢迎来到微易车险管理系统！</h4>\n" +
+    "    <p ng-if=\"welcome.userInfo.authed === 'UNKNOWN'\">检查登录状态中...</p>\n" +
+    "</div>\n" +
+    "<!-- 未登录 -->\n" +
+    "<form novalidate class=\"form-horizontal login-form center-block\" name=\"loginForm\" ng-if=\"welcome.userInfo.authed === 'FAIL'\">\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label class=\"control-label col-sm-2\" for=\"userName\">用户名：</label>\n" +
+    "        <div class=\"col-sm-10\">\n" +
+    "            <input type=\"text\" class=\"form-control\" id=\"userName\" ng-model=\"welcome.loginParam.userName\" required>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <label class=\"control-label col-sm-2\" for=\"pwd\">密码：</label>\n" +
+    "        <div class=\"col-sm-10\">\n" +
+    "            <input type=\"password\" class=\"form-control\" id=\"pwd\" ng-model=\"welcome.loginParam.password\" required>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "    <div class=\"form-group\">\n" +
+    "        <div class=\"col-sm-offset-2 col-sm-10\">\n" +
+    "            <button class=\"btn btn-default\" ng-click=\"welcome.doLogin(loginForm)\">登录</button>\n" +
+    "        </div>\n" +
+    "    </div>\n" +
+    "</form>\n" +
+    "");
+}]);
+})();
+
+(function(module) {
+try { module = angular.module("templates"); }
+catch(err) { module = angular.module("templates", []); }
+module.run(["$templateCache", function($templateCache) {
+  "use strict";
   $templateCache.put("src/app/orders/order-close-order-modal.tpl.html",
     "<div class=\"modal-header\">\n" +
     "    <h3 class=\"modal-title\">关闭订单</h3>\n" +
@@ -176,11 +211,11 @@ module.run(["$templateCache", function($templateCache) {
     "        <div class=\"form-group\">\n" +
     "            <label class=\"control-label col-sm-2\">快递单号：</label>\n" +
     "            <div class=\"col-sm-10\">\n" +
-    "                <input type=\"text\" ng-model=\"orderConfirmIssue.deliveryInfo.serialNo\" class=\"form-control\" required=\"true\">\n" +
+    "                <input type=\"text\" ng-model=\"orderConfirmIssue.deliveryInfo.serialNo\" class=\"form-control\">\n" +
     "            </div>\n" +
     "        </div>\n" +
     "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label col-sm-2\">交强险保单号：</label>\n" +
+    "            <label class=\"control-label col-sm-2\">*交强险保单号：</label>\n" +
     "            <div class=\"col-sm-10\">\n" +
     "                <input type=\"text\" ng-model=\"orderConfirmIssue.deliveryInfo.compulsoryInsuranceNo\" class=\"form-control\" required=\"true\">\n" +
     "            </div>\n" +
@@ -188,7 +223,7 @@ module.run(["$templateCache", function($templateCache) {
     "        <div class=\"form-group\">\n" +
     "            <label class=\"control-label col-sm-2\">商业险保单号：</label>\n" +
     "            <div class=\"col-sm-10\">\n" +
-    "                <input type=\"text\" ng-model=\"orderConfirmIssue.deliveryInfo.cmmercialInsuranceNo\" class=\"form-control\" required=\"true\">\n" +
+    "                <input type=\"text\" ng-model=\"orderConfirmIssue.deliveryInfo.cmmercialInsuranceNo\" class=\"form-control\">\n" +
     "            </div>\n" +
     "        </div>\n" +
     "    </form>\n" +
@@ -237,13 +272,13 @@ module.run(["$templateCache", function($templateCache) {
     "        <div class=\"form-group\">\n" +
     "            <label class=\"control-label col-sm-2\">车牌号：</label>\n" +
     "            <div class=\"col-sm-10\">\n" +
-    "                <p class=\"form-control-static text-primary\">{{orderConfirmUnderwrite.detailJson.vehicleInfo.licenseNo}}元</p>\n" +
+    "                <p class=\"form-control-static text-primary\">{{orderConfirmUnderwrite.detailJson.vehicleInfo.licenseNo}}</p>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "        <div class=\"form-group\">\n" +
     "            <label class=\"control-label col-sm-2\">总保费：</label>\n" +
     "            <div class=\"col-sm-10\">\n" +
-    "                <p class=\"form-control-static text-primary\">{{orderConfirmUnderwrite.carInsurePolicy.detailJson | insurePremiumGrandTotal | rmb}}元</p>\n" +
+    "                <p class=\"form-control-static text-primary\">{{orderConfirmUnderwrite.detailJson | insurePremiumGrandTotal | rmb}}元</p>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "    </form>\n" +
@@ -290,9 +325,11 @@ module.run(["$templateCache", function($templateCache) {
     "    </form>\n" +
     "    <form class=\"form-horizontal\" novalidate name=\"contactForm\">\n" +
     "        <h4>车辆联系人：\n" +
-    "        <button class=\"btn btn-sm btn-link\" ng-hide=\"contactForm.inEdit\" ng-click=\"contactForm.inEdit = true\">编辑</button>\n" +
+    "        <span ng-if=\"orderDetail.isEditable('contactForm')\">\n" +
+    "        <button class=\"btn btn-sm btn-link\" ng-hide=\"contactForm.inEdit\" ng-click=\"orderDetail.editForm(contactForm)\">编辑</button>\n" +
     "        <button class=\"btn btn-sm btn-link\" ng-show=\"contactForm.inEdit\" ng-click=\"orderDetail.saveChanges(contactForm)\">保存</button>\n" +
     "        <button class=\"btn btn-sm btn-link\" ng-show=\"contactForm.inEdit\" ng-click=\"orderDetail.cancelChanges(contactForm)\">取消</button>\n" +
+    "</span>\n" +
     "        </h4>\n" +
     "        <div class=\"form-group\">\n" +
     "            <label class=\"control-label col-sm-2\">姓名：</label>\n" +
@@ -307,7 +344,7 @@ module.run(["$templateCache", function($templateCache) {
     "            </div>\n" +
     "        </div>\n" +
     "    </form>\n" +
-    "    <form class=\"form-horizontal\" novalidate name=\"agentForm\">\n" +
+    "    <form ng-if=\"orderDetail.userInfo.user.company.id == 9999\" class=\"form-horizontal\" novalidate name=\"agentForm\">\n" +
     "        <h4>经纪人信息：</h4>\n" +
     "        <div class=\"form-group\">\n" +
     "            <label class=\"control-label col-sm-2\">姓名：</label>\n" +
@@ -323,13 +360,15 @@ module.run(["$templateCache", function($templateCache) {
     "        </div>\n" +
     "    </form>\n" +
     "    <form class=\"form-horizontal\" novalidate name=\"carCityForm\">\n" +
-    "        <h4>承保地区：\n" +
-    "        <button class=\"btn btn-sm btn-link\" ng-hide=\"carCityForm.inEdit\" ng-click=\"carCityForm.inEdit = true\">编辑</button>\n" +
+    "        <h4>行驶地区：\n" +
+    "        <span ng-if=\"orderDetail.isEditable('carCityForm')\">\n" +
+    "        <button class=\"btn btn-sm btn-link\" ng-hide=\"carCityForm.inEdit\" ng-click=\"orderDetail.editForm(carCityForm)\">编辑</button>\n" +
     "        <button class=\"btn btn-sm btn-link\" ng-show=\"carCityForm.inEdit\" ng-click=\"orderDetail.saveChanges(carCityForm)\">保存</button>\n" +
     "        <button class=\"btn btn-sm btn-link\" ng-show=\"carCityForm.inEdit\" ng-click=\"orderDetail.cancelChanges(carCityForm)\">取消</button>\n" +
+    "</span>\n" +
     "        </h4>\n" +
     "        <div class=\"form-group\">\n" +
-    "            <label class=\"control-label col-sm-2\">承保地区：</label>\n" +
+    "            <label class=\"control-label col-sm-2\">行驶地区：</label>\n" +
     "            <div class=\"col-sm-10\">\n" +
     "                <city-select name=\"carArea\" ng-model=\"orderDetail.carInsurePolicy.detailObject.vehicleInfo.carArea.city\" ng-readonly=\"!carCityForm.inEdit\"></city-select>\n" +
     "            </div>\n" +
@@ -337,9 +376,11 @@ module.run(["$templateCache", function($templateCache) {
     "    </form>\n" +
     "    <form class=\"form-horizontal\" novalidate name=\"driverForm\">\n" +
     "        <h4>车主信息：\n" +
-    "        <button class=\"btn btn-sm btn-link\" ng-hide=\"driverForm.inEdit\" ng-click=\"driverForm.inEdit = true\">编辑</button>\n" +
+    "        <span ng-if=\"orderDetail.isEditable('driverForm')\">\n" +
+    "        <button class=\"btn btn-sm btn-link\" ng-hide=\"driverForm.inEdit\" ng-click=\"orderDetail.editForm(driverForm)\">编辑</button>\n" +
     "        <button class=\"btn btn-sm btn-link\" ng-show=\"driverForm.inEdit\" ng-click=\"orderDetail.saveChanges(driverForm)\">保存</button>\n" +
     "        <button class=\"btn btn-sm btn-link\" ng-show=\"driverForm.inEdit\" ng-click=\"orderDetail.cancelChanges(driverForm)\">取消</button>\n" +
+    "</span>\n" +
     "        </h4>\n" +
     "        <div class=\"form-group\">\n" +
     "            <label class=\"control-label col-sm-2\">车主姓名：</label>\n" +
@@ -376,9 +417,11 @@ module.run(["$templateCache", function($templateCache) {
     "    </form>\n" +
     "    <form class=\"form-horizontal\" novalidate name=\"vehicleInfoForm\">\n" +
     "        <h4>车辆信息：\n" +
-    "        <button class=\"btn btn-sm btn-link\" ng-hide=\"vehicleInfoForm.inEdit\" ng-click=\"vehicleInfoForm.inEdit = true\">编辑</button>\n" +
+    "        <span ng-if=\"orderDetail.isEditable('vehicleInfoForm')\">\n" +
+    "        <button class=\"btn btn-sm btn-link\" ng-hide=\"vehicleInfoForm.inEdit\" ng-click=\"orderDetail.editForm(vehicleInfoForm)\">编辑</button>\n" +
     "        <button class=\"btn btn-sm btn-link\" ng-show=\"vehicleInfoForm.inEdit\" ng-click=\"orderDetail.saveChanges(vehicleInfoForm)\">保存</button>\n" +
     "        <button class=\"btn btn-sm btn-link\" ng-show=\"vehicleInfoForm.inEdit\" ng-click=\"orderDetail.cancelChanges(vehicleInfoForm)\">取消</button>\n" +
+    "</span>\n" +
     "        </h4>\n" +
     "        <div class=\"form-group\">\n" +
     "            <label class=\"control-label col-sm-2\">车牌号：</label>\n" +
@@ -423,7 +466,7 @@ module.run(["$templateCache", function($templateCache) {
     "        <div class=\"form-group\">\n" +
     "            <label class=\"control-label col-sm-2\">登记日期：</label>\n" +
     "            <div class=\"col-sm-10\">\n" +
-    "                <input type=\"text\" class=\"form-control\" uib-datepicker-popup ng-model=\"orderDetail.carInsurePolicy.detailObject.vehicleInfo.firstRegisterDate\" is-open=\"orderDetail.datePickerOpened.registerDate\" ng-required=\"true\" datepicker-options=\"orderDetail.datepickerOptions\" clear-text=\"清空\" current-text=\"今天\" close-text=\"关闭\" ng-readonly=\"!vehicleInfoForm.inEdit\" ng-click=\"orderDetail.openDatePicker('registerDate')\" />\n" +
+    "                <input type=\"text\" class=\"form-control\" uib-datepicker-popup ng-model=\"orderDetail.carInsurePolicy.detailObject.vehicleInfo.firstRegisterDate\" is-open=\"orderDetail.datePickerOpened.firstRegisterDate\" ng-required=\"true\" datepicker-options=\"orderDetail.datepickerOptions\" clear-text=\"清空\" current-text=\"今天\" close-text=\"关闭\" ng-readonly=\"!vehicleInfoForm.inEdit\" ng-click=\"orderDetail.openDatePicker('firstRegisterDate')\" data-than=\"orderDetail.datepickerOptions.tomorrow\" less-than />\n" +
     "            </div>\n" +
     "        </div>\n" +
     "        <div class=\"form-group\">\n" +
@@ -440,59 +483,62 @@ module.run(["$templateCache", function($templateCache) {
     "        <div class=\"form-group\" ng-if=\"orderDetail.carInsurePolicy.detailObject.vehicleInfo.transferFlag\">\n" +
     "            <label class=\"control-label col-sm-2\">过户日期：</label>\n" +
     "            <div class=\"col-sm-10\">\n" +
-    "                <input type=\"text\" class=\"form-control\" uib-datepicker-popup ng-model=\"orderDetail.carInsurePolicy.detailObject.vehicleInfo.transferDate\" is-open=\"orderDetail.datePickerOpened.transferDate\" ng-required=\"true\" datepicker-options=\"orderDetail.datepickerOptions\" clear-text=\"清空\" current-text=\"今天\" close-text=\"关闭\" ng-readonly=\"!vehicleInfoForm.inEdit\" ng-click=\"orderDetail.openDatePicker('transferDate')\" />\n" +
+    "                <input type=\"text\" class=\"form-control\" uib-datepicker-popup ng-model=\"orderDetail.carInsurePolicy.detailObject.vehicleInfo.transferDate\" is-open=\"orderDetail.datePickerOpened.transferDate\" ng-required=\"true\" datepicker-options=\"orderDetail.datepickerOptions\" clear-text=\"清空\" current-text=\"今天\" close-text=\"关闭\" ng-readonly=\"!vehicleInfoForm.inEdit\" ng-click=\"orderDetail.openDatePicker('transferDate')\" data-than=\"orderDetail.datepickerOptions.tomorrow\" less-than/>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "    </form>\n" +
     "    <form class=\"form-horizontal\" novalidate name=\"insurePeriodForm\">\n" +
     "        <h4>保险期限：\n" +
-    "        <button class=\"btn btn-sm btn-link\" ng-hide=\"insurePeriodForm.inEdit\" ng-click=\"insurePeriodForm.inEdit = true\">编辑</button>\n" +
+    "        <span ng-if=\"orderDetail.isEditable('insurePeriodForm')\">\n" +
+    "        <button class=\"btn btn-sm btn-link\" ng-hide=\"insurePeriodForm.inEdit\" ng-click=\"orderDetail.editForm(insurePeriodForm)\">编辑</button>\n" +
     "        <button class=\"btn btn-sm btn-link\" ng-show=\"insurePeriodForm.inEdit\" ng-click=\"orderDetail.saveChanges(insurePeriodForm)\">保存</button>\n" +
     "        <button class=\"btn btn-sm btn-link\" ng-show=\"insurePeriodForm.inEdit\" ng-click=\"orderDetail.cancelChanges(insurePeriodForm)\">取消</button>\n" +
+    "</span>\n" +
     "        </h4>\n" +
     "        <div class=\"form-group\" ng-if=\"orderDetail.carInsurePolicy.detailObject.compulsory\">\n" +
     "            <label class=\"control-label col-sm-2\">交强险期限：</label>\n" +
     "            <div class=\"col-sm-10\">\n" +
     "                <div class=\"form-text-inline\">\n" +
-    "                    <input type=\"text\" class=\"form-control\" uib-datepicker-popup ng-model=\"orderDetail.carInsurePolicy.detailObject.compulsory.validStartDatetime\" is-open=\"orderDetail.datePickerOpened.compulsoryStart\" ng-required=\"true\" datepicker-options=\"orderDetail.datepickerOptions\" clear-text=\"清空\" current-text=\"今天\" close-text=\"关闭\" ng-click=\"orderDetail.openDatePicker('compulsoryStart')\" ng-disabled=\"!insurePeriodForm.inEdit\" />\n" +
+    "                    <input type=\"text\" class=\"form-control\" uib-datepicker-popup ng-model=\"orderDetail.carInsurePolicy.detailObject.compulsory.validStartDatetime\" is-open=\"orderDetail.datePickerOpened.compulsoryStart\" ng-required=\"true\" datepicker-options=\"orderDetail.datepickerOptions\" clear-text=\"清空\" current-text=\"今天\" close-text=\"关闭\" ng-click=\"orderDetail.openDatePicker('compulsoryStart')\" ng-disabled=\"!insurePeriodForm.inEdit\" data-than=\"orderDetail.datepickerOptions.tomorrow\" greater-than-equal/>\n" +
     "                </div>\n" +
     "                <div class=\"form-text-inline\">\n" +
-    "                    <uib-timepicker ng-model=\"orderDetail.carInsurePolicy.detailObject.compulsory.validStartDatetime\" minute-step=\"orderDetail.timepickerOptions.mstep\" show-meridian=\"orderDetail.timepickerOptions.showMerdian\" show-spinners=\"orderDetail.timepickerOptions.showSpinners\" ng-disabled=\"!insurePeriodForm.inEdit\"></uib-timepicker>\n" +
+    "                    <uib-timepicker ng-model=\"orderDetail.carInsurePolicy.detailObject.compulsory.validStartDatetime\" minute-step=\"orderDetail.timepickerOptions.mstep\" show-meridian=\"orderDetail.timepickerOptions.showMerdian\" show-spinners=\"orderDetail.timepickerOptions.showSpinners\" mousewheel=\"orderDetail.timepickerOptions.mousewheel\" ng-disabled=\"!insurePeriodForm.inEdit\"></uib-timepicker>\n" +
     "                </div>\n" +
     "                <div class=\"form-text-inline\"> —— </div>\n" +
     "                <div class=\"form-text-inline\">\n" +
-    "                    <input type=\"text\" class=\"form-control\" uib-datepicker-popup ng-model=\"orderDetail.carInsurePolicy.detailObject.compulsory.validEndDatetime\" is-open=\"orderDetail.datePickerOpened.compulsoryEnd\" ng-required=\"true\" datepicker-options=\"orderDetail.datepickerOptions\" clear-text=\"清空\" current-text=\"今天\" close-text=\"关闭\" ng-click=\"orderDetail.openDatePicker('compulsoryEnd')\" ng-disabled=\"!insurePeriodForm.inEdit\" />\n" +
+    "                    <input type=\"text\" class=\"form-control\" uib-datepicker-popup ng-model=\"orderDetail.carInsurePolicy.detailObject.compulsory.validEndDatetime\" is-open=\"orderDetail.datePickerOpened.compulsoryEnd\" ng-required=\"true\" datepicker-options=\"orderDetail.datepickerOptions\" clear-text=\"清空\" current-text=\"今天\" close-text=\"关闭\" ng-click=\"orderDetail.openDatePicker('compulsoryEnd')\" ng-disabled=\"!insurePeriodForm.inEdit\" data-than=\"orderDetail.carInsurePolicy.detailObject.compulsory.validStartDatetime\" data-gap=\"{{365*24*3600}}\" greater-than-equal />\n" +
     "                </div>\n" +
     "                <div class=\"form-text-inline\">\n" +
-    "                    <uib-timepicker ng-model=\"orderDetail.carInsurePolicy.detailObject.compulsory.validEndDatetime\" minute-step=\"orderDetail.timepickerOptions.mstep\" show-meridian=\"orderDetail.timepickerOptions.showMerdian\" show-spinners=\"orderDetail.timepickerOptions.showSpinners\" ng-disabled=\"!insurePeriodForm.inEdit\"></uib-timepicker>\n" +
+    "                    <uib-timepicker ng-model=\"orderDetail.carInsurePolicy.detailObject.compulsory.validEndDatetime\" minute-step=\"orderDetail.timepickerOptions.mstep\" show-meridian=\"orderDetail.timepickerOptions.showMerdian\" show-spinners=\"orderDetail.timepickerOptions.showSpinners\" mousewheel=\"orderDetail.timepickerOptions.mousewheel\" ng-disabled=\"!insurePeriodForm.inEdit\"></uib-timepicker>\n" +
     "                </div>\n" +
-    "                <div>{{orderDetail.carInsurePolicy.detailObject.compulsory.validEndDatetime | date:'yyyy-MM-dd hh:mm:ss' }}</div>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "        <div class=\"form-group\" ng-if=\"orderDetail.carInsurePolicy.detailObject.commercial\">\n" +
     "            <label class=\"control-label col-sm-2\">商业险期限：</label>\n" +
     "            <div class=\"col-sm-10\">\n" +
     "                <div class=\"form-text-inline\">\n" +
-    "                    <input type=\"text\" class=\"form-control\" uib-datepicker-popup ng-model=\"orderDetail.carInsurePolicy.detailObject.commercial.validStartDatetime\" is-open=\"orderDetail.datePickerOpened.commercialStart\" ng-required=\"true\" datepicker-options=\"orderDetail.datepickerOptions\" clear-text=\"清空\" current-text=\"今天\" close-text=\"关闭\" ng-click=\"orderDetail.openDatePicker('commercialStart')\" ng-disabled=\"!insurePeriodForm.inEdit\" />\n" +
+    "                    <input type=\"text\" class=\"form-control\" uib-datepicker-popup ng-model=\"orderDetail.carInsurePolicy.detailObject.commercial.validStartDatetime\" is-open=\"orderDetail.datePickerOpened.commercialStart\" ng-required=\"true\" datepicker-options=\"orderDetail.datepickerOptions\" clear-text=\"清空\" current-text=\"今天\" close-text=\"关闭\" ng-click=\"orderDetail.openDatePicker('commercialStart')\" ng-disabled=\"!insurePeriodForm.inEdit\" data-than=\"orderDetail.datepickerOptions.tomorrow\" greater-than-equal />\n" +
     "                </div>\n" +
     "                <div class=\"form-text-inline\">\n" +
-    "                    <uib-timepicker ng-model=\"orderDetail.carInsurePolicy.detailObject.commercial.validStartDatetime\" minute-step=\"orderDetail.timepickerOptions.mstep\" show-meridian=\"orderDetail.timepickerOptions.showMerdian\" show-spinners=\"orderDetail.timepickerOptions.showSpinners\" ng-disabled=\"!insurePeriodForm.inEdit\"></uib-timepicker>\n" +
+    "                    <uib-timepicker ng-model=\"orderDetail.carInsurePolicy.detailObject.commercial.validStartDatetime\" minute-step=\"orderDetail.timepickerOptions.mstep\" show-meridian=\"orderDetail.timepickerOptions.showMerdian\" show-spinners=\"orderDetail.timepickerOptions.showSpinners\" mousewheel=\"orderDetail.timepickerOptions.mousewheel\" ng-disabled=\"!insurePeriodForm.inEdit\"></uib-timepicker>\n" +
     "                </div>\n" +
     "                <div class=\"form-text-inline\"> —— </div>\n" +
     "                <div class=\"form-text-inline\">\n" +
-    "                    <input type=\"text\" class=\"form-control\" uib-datepicker-popup ng-model=\"orderDetail.carInsurePolicy.detailObject.commercial.validEndDatetime\" is-open=\"orderDetail.datePickerOpened.commercialEnd\" ng-required=\"true\" datepicker-options=\"orderDetail.datepickerOptions\" clear-text=\"清空\" current-text=\"今天\" close-text=\"关闭\" ng-click=\"orderDetail.openDatePicker('commercialEnd')\" ng-disabled=\"!insurePeriodForm.inEdit\" />\n" +
+    "                    <input type=\"text\" class=\"form-control\" uib-datepicker-popup ng-model=\"orderDetail.carInsurePolicy.detailObject.commercial.validEndDatetime\" is-open=\"orderDetail.datePickerOpened.commercialEnd\" ng-required=\"true\" datepicker-options=\"orderDetail.datepickerOptions\" clear-text=\"清空\" current-text=\"今天\" close-text=\"关闭\" ng-click=\"orderDetail.openDatePicker('commercialEnd')\" ng-disabled=\"!insurePeriodForm.inEdit\" data-than=\"orderDetail.carInsurePolicy.detailObject.commercial.validStartDatetime\" data-gap=\"{{365*24*3600}}\" greater-than-equal />\n" +
     "                </div>\n" +
     "                <div class=\"form-text-inline\">\n" +
-    "                    <uib-timepicker ng-model=\"orderDetail.carInsurePolicy.detailObject.commercial.validEndDatetime\" minute-step=\"orderDetail.timepickerOptions.mstep\" show-meridian=\"orderDetail.timepickerOptions.showMerdian\" show-spinners=\"orderDetail.timepickerOptions.showSpinners\" ng-disabled=\"!insurePeriodForm.inEdit\"></uib-timepicker>\n" +
+    "                    <uib-timepicker ng-model=\"orderDetail.carInsurePolicy.detailObject.commercial.validEndDatetime\" minute-step=\"orderDetail.timepickerOptions.mstep\" show-meridian=\"orderDetail.timepickerOptions.showMerdian\" show-spinners=\"orderDetail.timepickerOptions.showSpinners\" mousewheel=\"orderDetail.timepickerOptions.mousewheel\" ng-disabled=\"!insurePeriodForm.inEdit\"></uib-timepicker>\n" +
     "                </div>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "    </form>\n" +
     "    <form class=\"form-horizontal\" novalidate name=\"insurePolicyForm\">\n" +
     "        <h4>保费计算：\n" +
-    "        <button class=\"btn btn-sm btn-link\" ng-hide=\"insurePolicyForm.inEdit\" ng-click=\"insurePolicyForm.inEdit = true\">编辑</button>\n" +
+    "        <span ng-if=\"orderDetail.isEditable('insurePolicyForm')\">\n" +
+    "        <button class=\"btn btn-sm btn-link\" ng-hide=\"insurePolicyForm.inEdit\" ng-click=\"orderDetail.editForm(insurePolicyForm)\">编辑</button>\n" +
     "        <button class=\"btn btn-sm btn-link\" ng-show=\"insurePolicyForm.inEdit\" ng-click=\"orderDetail.saveChanges(insurePolicyForm)\">保存</button>\n" +
     "        <button class=\"btn btn-sm btn-link\" ng-show=\"insurePolicyForm.inEdit\" ng-click=\"orderDetail.cancelChanges(insurePolicyForm)\">取消</button>\n" +
+    "</span>\n" +
     "        </h4>\n" +
     "        <div ng-if=\"orderDetail.carInsurePolicy.detailObject.compulsory\">\n" +
     "            <div class=\"form-group\">\n" +
@@ -509,10 +555,10 @@ module.run(["$templateCache", function($templateCache) {
     "            </div>\n" +
     "            <div class=\"text-right text-primary\">合计：{{orderDetail.carInsurePolicy.detailObject.compulsory | compulsorySum | rmb}}元</div>\n" +
     "        </div>\n" +
-    "        <div ng-if=\"orderDetail.carInsurePolicy.detailObject.commercial\">\n" +
+    "        <div ng-if=\"orderDetail.carInsurePolicy.detailObject.commercial.insureList.length\">\n" +
     "            <div class=\"form-group\" ng-repeat=\"insureItem in orderDetail.carInsurePolicy.detailObject.commercial.insureList\">\n" +
     "                <label class=\"control-label col-sm-2\">{{insureItem.insureName}}</label>\n" +
-    "                <div class=\"form-text col-sm-4\">{{insureItem.insureAmount}}</div>\n" +
+    "                <div class=\"form-text col-sm-4\">{{insureItem | insureAmountDesc}}</div>\n" +
     "                <div class=\"col-sm-6\">\n" +
     "                    <input type=\"number\" ng-model=\"insureItem.insurePremium\" class=\"form-control\" ng-readonly=\"!insurePolicyForm.inEdit\">\n" +
     "                </div>\n" +
@@ -533,11 +579,13 @@ module.run(["$templateCache", function($templateCache) {
     "            <div class=\"col-sm-offset-3 col-sm-6 text-right\">总计：{{orderDetail.carInsurePolicy.detailObject | insurePremiumGrandTotal | rmb}}元</div>\n" +
     "        </div>\n" +
     "    </form>\n" +
-    "    <form class=\"form-horizontal\" novalidate name=\"distributionInfoForm\">\n" +
+    "    <form class=\"form-horizontal\" novalidate name=\"distributionInfoForm\" ng-if=\"orderDetail.isVisible('distributionInfoForm')\">\n" +
     "        <h4>收件人信息：\n" +
-    "        <button class=\"btn btn-sm btn-link\" ng-hide=\"distributionInfoForm.inEdit\" ng-click=\"distributionInfoForm.inEdit = true\">编辑</button>\n" +
+    "        <span ng-if=\"orderDetail.isEditable('distributionInfoForm')\">\n" +
+    "        <button class=\"btn btn-sm btn-link\" ng-hide=\"distributionInfoForm.inEdit\" ng-click=\"orderDetail.editForm(distributionInfoForm)\">编辑</button>\n" +
     "        <button class=\"btn btn-sm btn-link\" ng-show=\"distributionInfoForm.inEdit\" ng-click=\"orderDetail.saveChanges(distributionInfoForm)\">保存</button>\n" +
     "        <button class=\"btn btn-sm btn-link\" ng-show=\"distributionInfoForm.inEdit\" ng-click=\"orderDetail.cancelChanges(distributionInfoForm)\">取消</button>\n" +
+    "        </span>\n" +
     "        </h4>\n" +
     "        <div class=\"form-group\">\n" +
     "            <label class=\"control-label col-sm-2\">姓名：</label>\n" +
@@ -554,7 +602,7 @@ module.run(["$templateCache", function($templateCache) {
     "        <div class=\"form-group\">\n" +
     "            <label class=\"control-label col-sm-2\">收件地区：</label>\n" +
     "            <div class=\"col-sm-10\">\n" +
-    "                <city-select ng-model=\"orderDetail.carInsurePolicy.detailObject.distributionInfo.reveiverArea\" ng-readonly=\"!distributionInfoForm.inEdit\"></city-select>\n" +
+    "                <city-select ng-model=\"orderDetail.carInsurePolicy.detailObject.distributionInfo.receiverArea\" ng-readonly=\"!distributionInfoForm.inEdit\"></city-select>\n" +
     "            </div>\n" +
     "        </div>\n" +
     "        <div class=\"form-group\">\n" +
@@ -570,11 +618,13 @@ module.run(["$templateCache", function($templateCache) {
     "            </div>\n" +
     "        </div>\n" +
     "    </form>\n" +
-    "    <form class=\"form-horizontal\" novalidate name=\"writerForm\">\n" +
+    "    <form class=\"form-horizontal\" novalidate name=\"writerForm\" ng-if=\"orderDetail.isVisible('writerForm')\">\n" +
     "        <h4>出单信息：\n" +
-    "        <button class=\"btn btn-sm btn-link\" ng-hide=\"writerForm.inEdit\" ng-click=\"writerForm.inEdit = true\">编辑</button>\n" +
+    "        <span ng-if=\"orderDetail.isEditable('writerForm')\">\n" +
+    "        <button class=\"btn btn-sm btn-link\" ng-hide=\"writerForm.inEdit\" ng-click=\"orderDetail.editForm(writerForm)\">编辑</button>\n" +
     "        <button class=\"btn btn-sm btn-link\" ng-show=\"writerForm.inEdit\" ng-click=\"orderDetail.saveChanges(writerForm)\">保存</button>\n" +
     "        <button class=\"btn btn-sm btn-link\" ng-show=\"writerForm.inEdit\" ng-click=\"orderDetail.cancelChanges(writerForm)\">取消</button>\n" +
+    "</span>\n" +
     "        </h4>\n" +
     "        <div class=\"form-group\" ng-if=\"['1', '3'].indexOf(orderDetail.carInsurePolicy.detailObject.insuranceType) !== -1\">\n" +
     "            <label class=\"control-label col-sm-2\">交强险保单号：</label>\n" +
@@ -585,15 +635,18 @@ module.run(["$templateCache", function($templateCache) {
     "        <div class=\"form-group\" ng-if=\"['2', '3'].indexOf(orderDetail.carInsurePolicy.detailObject.insuranceType) !== -1\">\n" +
     "            <label class=\"control-label col-sm-2\">商业险保单号：</label>\n" +
     "            <div class=\"col-sm-10\">\n" +
-    "                <input type=\"text\" ng-model=\"orderDetail.carInsurePolicy.detailObject.commercial.cmmercialInsuranceNo\" class=\"form-control\" ng-readonly=\"!writerForm.inEdit\">\n" +
+    "                <input type=\"text\" ng-model=\"orderDetail.carInsurePolicy.detailObject.commercial.commercialInsuranceNo\" class=\"form-control\" ng-readonly=\"!writerForm.inEdit\">\n" +
     "            </div>\n" +
     "        </div>\n" +
     "    </form>\n" +
-    "    <form class=\"form-horizontal\" novalidate name=\"deliveryInfoForm\">\n" +
+    "    <form class=\"form-horizontal\" novalidate name=\"deliveryInfoForm\" ng-if=\"orderDetail.isVisible('writerForm')\">\n" +
     "        <h4>快递信息：\n" +
-    "        <button class=\"btn btn-sm btn-link\" ng-hide=\"deliveryInfoForm.inEdit\" ng-click=\"deliveryInfoForm.inEdit = true\">编辑</button>\n" +
+    "        <span ng-if=\"orderDetail.isEditable('deliveryInfoForm')\">\n" +
+    "        <button class=\"btn btn-sm btn-link\" ng-hide=\"deliveryInfoForm.inEdit\" ng-click=\"orderDetail.editForm(deliveryInfoForm)\">编辑</button>\n" +
     "        <button class=\"btn btn-sm btn-link\" ng-show=\"deliveryInfoForm.inEdit\" ng-click=\"orderDetail.saveChanges(deliveryInfoForm)\">保存</button>\n" +
     "        <button class=\"btn btn-sm btn-link\" ng-show=\"deliveryInfoForm.inEdit\" ng-click=\"orderDetail.cancelChanges(deliveryInfoForm)\">取消</button>\n" +
+    "        </span>\n" +
+    "</span>\n" +
     "        </h4>\n" +
     "        <div class=\"form-group\">\n" +
     "            <label class=\"control-label col-sm-2\">快递公司：</label>\n" +
@@ -784,6 +837,56 @@ try { module = angular.module("templates"); }
 catch(err) { module = angular.module("templates", []); }
 module.run(["$templateCache", function($templateCache) {
   "use strict";
+  $templateCache.put("src/app/orders/order-user-detail-modal.tpl.html",
+    "<div class=\"modal-header\">\n" +
+    "    <h3 class=\"modal-title\">用户信息</h3>\n" +
+    "</div>\n" +
+    "<div class=\"modal-body\">\n" +
+    "    <form class=\"form-horizontal\" novalidate name=\"formUserInfo\">\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label col-sm-2\">公司：</label>\n" +
+    "            <div class=\"col-sm-10\">\n" +
+    "                <p class=\"form-control-static\">{{userDetail.info.company.name}}</p>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label col-sm-2\">权限：</label>\n" +
+    "            <div class=\"col-sm-10\">\n" +
+    "                <p class=\"form-control-static\">{{userDetail.info.role.desc}}元</p>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label col-sm-2\">用户名：</label>\n" +
+    "            <div class=\"col-sm-10\">\n" +
+    "                <p class=\"form-control-static\">{{userDetail.info.userName}}</p>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label col-sm-2\">真实姓名：</label>\n" +
+    "            <div class=\"col-sm-10\">\n" +
+    "                <p class=\"form-control-static\">{{userDetail.info.nickname}}</p>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "        <div class=\"form-group\">\n" +
+    "            <label class=\"control-label col-sm-2\">手机号码：</label>\n" +
+    "            <div class=\"col-sm-10\">\n" +
+    "                <p class=\"form-control-static\">{{userDetail.info.mobile}}</p>\n" +
+    "            </div>\n" +
+    "        </div>\n" +
+    "    </form>\n" +
+    "</div>\n" +
+    "<div class=\"modal-footer\">\n" +
+    "    <button class=\"btn btn-primary\" type=\"button\" ng-click=\"$dismiss()\">关闭</button>\n" +
+    "</div>\n" +
+    "");
+}]);
+})();
+
+(function(module) {
+try { module = angular.module("templates"); }
+catch(err) { module = angular.module("templates", []); }
+module.run(["$templateCache", function($templateCache) {
+  "use strict";
   $templateCache.put("src/app/orders/orders.tpl.html",
     "<div class=\"content-section\">\n" +
     "    <header class=\"content-section-header\">多条件搜索</header>\n" +
@@ -833,102 +936,106 @@ module.run(["$templateCache", function($templateCache) {
     "                <!-- (#index) -->\n" +
     "                <th>订单号</th>\n" +
     "                <!-- (policySn) -->\n" +
-    "                <th class=\"date-column\" ng-if=\"[-200].indexOf(orders.searchParam.policyStatus) !== -1\">生成时间</th>\n" +
+    "                <th class=\"date-column\" ng-if=\"orders.showOrdersProp('createDate')\">生成时间</th>\n" +
     "                <!-- (createDate) -->\n" +
-    "                <th class=\"date-column\" ng-if=\"[0,10].indexOf(orders.searchParam.policyStatus) !== -1\">提交订单时间</th>\n" +
+    "                <th class=\"date-column\" ng-if=\"orders.showOrdersProp('subOrderTime')\">提交订单时间</th>\n" +
     "                <!-- (subOrderTime) -->\n" +
-    "                <th class=\"date-column\" ng-if=\"[20,50,55].indexOf(orders.searchParam.policyStatus) !== -1\">报价时间</th>\n" +
-    "                <!-- (quotesTime) -->\n" +
-    "                <th ng-if=\"[55].indexOf(orders.searchParam.policyStatus) !== -1\">付款剩余时间</th>\n" +
+    "                <th class=\"date-column\" ng-if=\"orders.showOrdersProp('quotesTime')\">{{orders.searchParam.policyStatus == 300 ? '确认时间' : '报价时间'}}</th>\n" +
+    "                <!-- (quotesTime) 在大地系统中显示为“确认时间” -->\n" +
+    "                <th ng-if=\"orders.showOrdersProp('effectTime')\">付款剩余时间</th>\n" +
     "                <!-- (effectTime - now) -->\n" +
-    "                <th ng-if=\"[100].indexOf(orders.searchParam.policyStatus) !== -1\">支付时间</th>\n" +
+    "                <th ng-if=\"orders.showOrdersProp('payTime')\">支付时间</th>\n" +
     "                <!-- (payTime) -->\n" +
-    "                <th ng-if=\"[180,300].indexOf(orders.searchParam.policyStatus) !== -1\">核保时间</th>\n" +
+    "                <th ng-if=\"orders.showOrdersProp('underwriteTime')\">核保时间</th>\n" +
     "                <!-- (underwriteTime) -->\n" +
-    "                <th ng-if=\"[200].indexOf(orders.searchParam.policyStatus) !== -1\">出单时间</th>\n" +
+    "                <th ng-if=\"orders.showOrdersProp('writerTime')\">出单时间</th>\n" +
     "                <!-- (writerTime) -->\n" +
-    "                <th ng-if=\"[600].indexOf(orders.searchParam.policyStatus) !== -1\">关闭时间</th>\n" +
+    "                <th ng-if=\"orders.showOrdersProp('offGroup')\">关闭时间</th>\n" +
     "                <!-- (offTime) -->\n" +
-    "                <th ng-if=\"[500].indexOf(orders.searchParam.policyStatus) !== -1\">执行退款时间</th>\n" +
+    "                <th ng-if=\"orders.showOrdersProp('refundGroup')\">执行退款时间</th>\n" +
     "                <!-- (refundTime) -->\n" +
-    "                <th ng-if=\"[0].indexOf(orders.searchParam.policyStatus) !== -1\">订单状态</th>\n" +
+    "                <th ng-if=\"orders.showOrdersProp('policyStatus')\">订单状态</th>\n" +
     "                <!-- (policyStatus|) -->\n" +
     "                <th>车牌号</th>\n" +
     "                <!-- (carNumber) -->\n" +
     "                <th>保险公司</th>\n" +
     "                <!-- (company) -->\n" +
-    "                <th>保险师</th>\n" +
+    "                <th ng-if=\"orders.showOrdersProp('brokerGroup')\">保险师</th>\n" +
     "                <!-- (nickName) -->\n" +
-    "                <th>手机</th>\n" +
+    "                <th ng-if=\"orders.showOrdersProp('brokerGroup')\">手机</th>\n" +
     "                <!-- (mobile) -->\n" +
-    "                <th ng-if=\"[0,20,50,55,100,180,200,300,500,600].indexOf(orders.searchParam.policyStatus) !== -1\">报价人</th>\n" +
+    "                <th ng-if=\"orders.showOrdersProp('contactGroup')\">联系人</th>\n" +
+    "                <!-- (nickName) -->\n" +
+    "                <th ng-if=\"orders.showOrdersProp('contactGroup')\">手机</th>\n" +
+    "                <!-- (mobile) -->\n" +
+    "                <th ng-if=\"orders.showOrdersProp('quotesUser')\">报价人</th>\n" +
     "                <!-- (quotesUser) -->\n" +
-    "                <th ng-if=\"[0,180,200,300,500].indexOf(orders.searchParam.policyStatus) !== -1\">核保人</th>\n" +
+    "                <th ng-if=\"orders.showOrdersProp('underwriteUser')\">核保人</th>\n" +
     "                <!-- (underwriteUser) -->\n" +
-    "                <th ng-if=\"[0,200].indexOf(orders.searchParam.policyStatus) !== -1\">出单人</th>\n" +
+    "                <th ng-if=\"orders.showOrdersProp('writerUser')\">出单人</th>\n" +
     "                <!-- (writerUser) -->\n" +
-    "                <th ng-if=\"[600].indexOf(orders.searchParam.policyStatus) !== -1\">关闭类型</th>\n" +
+    "                <th ng-if=\"orders.showOrdersProp('offGroup')\">关闭类型</th>\n" +
     "                <!-- (offUser |) -->\n" +
-    "                <th ng-if=\"[600].indexOf(orders.searchParam.policyStatus) !== -1\">关闭人</th>\n" +
+    "                <th ng-if=\"orders.showOrdersProp('offGroup')\">关闭人</th>\n" +
     "                <!-- (offUser) -->\n" +
-    "                <th ng-if=\"[500].indexOf(orders.searchParam.policyStatus) !== -1\">退款人</th>\n" +
+    "                <th ng-if=\"orders.showOrdersProp('refundGroup')\">退款人</th>\n" +
     "                <!-- (refundUser) -->\n" +
     "                <th>订单详情</th>\n" +
     "                <!-- (policyUuid>) -->\n" +
-    "                <th ng-if=\"[55, -200].indexOf(orders.searchParam.policyStatus) !== -1\">跟进状态</th>\n" +
+    "                <th ng-if=\"orders.showOrdersProp('followUpGroup')\">跟进状态</th>\n" +
     "                <!-- (followUpStatus) -->\n" +
-    "                <th ng-if=\"[55, -200].indexOf(orders.searchParam.policyStatus) !== -1\">跟进人</th>\n" +
+    "                <th ng-if=\"orders.showOrdersProp('followUpGroup')\">跟进人</th>\n" +
     "                <!-- (followUpUser) -->\n" +
-    "                <th ng-if=\"[55, -200].indexOf(orders.searchParam.policyStatus) !== -1\">跟进时间</th>\n" +
+    "                <th ng-if=\"orders.showOrdersProp('followUpGroup')\">跟进时间</th>\n" +
     "                <!-- (followUpTime) -->\n" +
-    "                <th ng-if=\"[10,20,50,55,100,180,200,300,500,600, -200].indexOf(orders.searchParam.policyStatus) !== -1\">操作</th>\n" +
+    "                <th ng-if=\"orders.showOrdersProp('operate')\">操作</th>\n" +
     "            </tr>\n" +
     "        </thead>\n" +
     "        <tbody>\n" +
     "            <tr current-page=\"orders.paginationOptions.currentPage\" total-items=\"orders.paginationOptions.count\" dir-paginate=\"order in orders.searchResult | itemsPerPage:orders.paginationOptions.pageSize\">\n" +
     "                <td>{{ ($index + 1) + (orders.paginationOptions.currentPage - 1) * orders.paginationOptions.pageSize}}</td>\n" +
     "                <td class=\"text-nowrap\">{{order.policySn}}</td>\n" +
-    "                <td ng-if=\"[-200].indexOf(orders.searchParam.policyStatus) !== -1\" class=\"date-column\">{{order.createDate | date: 'yyyy-MM-dd HH:mm:ss'}}</td>\n" +
-    "                <td class=\"date-column\" ng-if=\"[0,10].indexOf(orders.searchParam.policyStatus) !== -1\">{{order.subOrderTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>\n" +
-    "                <td class=\"date-column\" ng-if=\"[20,50,55].indexOf(orders.searchParam.policyStatus) !== -1\">{{order.quotesTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>\n" +
-    "                <td class=\"text-nowrap\" ng-if=\"[55].indexOf(orders.searchParam.policyStatus) !== -1\">\n" +
+    "                <td ng-if=\"orders.showOrdersProp('createDate')\" class=\"date-column\">{{order.createDate | date: 'yyyy-MM-dd HH:mm:ss'}}</td>\n" +
+    "                <td class=\"date-column\" ng-if=\"orders.showOrdersProp('subOrderTime')\">{{order.subOrderTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>\n" +
+    "                <td class=\"date-column\" ng-if=\"orders.showOrdersProp('quotesTime')\">{{order.quotesTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>\n" +
+    "                <td class=\"text-nowrap\" ng-if=\"orders.showOrdersProp('effectTime')\">\n" +
     "                    <span ng-if=\"order.effectTime\" countdown end-date=\"{{order.effectTime}}\" units=\"days|hours|minutes\" lang=\"CN\"></span>\n" +
-    "                    <span ng-if=\"!order.effectTime\">无信息</span>\n" +
-    "                    <span></span>\n" +
+    "                    <span ng-if=\"!order.effectTime\">无信息</span>                    \n" +
     "                </td>\n" +
-    "                <td class=\"date-column\" ng-if=\"[100].indexOf(orders.searchParam.policyStatus) !== -1\">{{order.payTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>\n" +
-    "                <td class=\"date-column\" ng-if=\"[180,300].indexOf(orders.searchParam.policyStatus) !== -1\">{{order.underwriteTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>\n" +
-    "                <td class=\"date-column\" ng-if=\"[200].indexOf(orders.searchParam.policyStatus) !== -1\">{{order.writerTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>\n" +
-    "                <td class=\"date-column\" ng-if=\"[600].indexOf(orders.searchParam.policyStatus) !== -1\">{{order.offTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>\n" +
-    "                <td class=\"date-column\" ng-if=\"[500].indexOf(orders.searchParam.policyStatus) !== -1\">{{order.refundTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>\n" +
-    "                <td ng-if=\"[0].indexOf(orders.searchParam.policyStatus) !== -1\" class=\"text-nowrap\">{{order.policyStatus | orderStatus}}</td>\n" +
+    "                <td class=\"date-column\" ng-if=\"orders.showOrdersProp('payTime')\">{{order.payTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>\n" +
+    "                <td class=\"date-column\" ng-if=\"orders.showOrdersProp('underwriteTime')\">{{order.underwriteTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>\n" +
+    "                <td class=\"date-column\" ng-if=\"orders.showOrdersProp('writerTime')\">{{order.writerTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>\n" +
+    "                <td class=\"date-column\" ng-if=\"orders.showOrdersProp('offGroup')\">{{order.offTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>\n" +
+    "                <td class=\"date-column\" ng-if=\"orders.showOrdersProp('refundGroup')\">{{order.refundTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>\n" +
+    "                <td ng-if=\"orders.showOrdersProp('policyStatus')\" class=\"text-nowrap\">{{order.policyStatus | orderStatus}}</td>\n" +
     "                <td class=\"text-nowrap\">{{order.carNumber || '未上牌'}}</td>\n" +
     "                <td>{{order.company}}</td>\n" +
-    "                <td class=\"text-nowrap\">{{order.nickName}}</td>\n" +
-    "                <td class=\"text-nowrap\">{{order.mobile}}</td>\n" +
-    "                <td ng-if=\"[0,20,50,55,100,180,200,300,500,600].indexOf(orders.searchParam.policyStatus) !== -1\">{{order.quotesUser}}</td>\n" +
-    "                <td ng-if=\"[0,180,200,300,500].indexOf(orders.searchParam.policyStatus) !== -1\">{{order.underwriteUser}}</td>\n" +
-    "                <td ng-if=\"[0,200].indexOf(orders.searchParam.policyStatus) !== -1\">{{order.writerUser || order.policyStatus == 200 && '系统' || ''}}</td>\n" +
-    "                <td ng-if=\"[600].indexOf(orders.searchParam.policyStatus) !== -1\">{{order.offUser ? '人工关闭' : '系统关闭'}}</td>\n" +
-    "                <td ng-if=\"[600].indexOf(orders.searchParam.policyStatus) !== -1\">{{order.offUser}}</td>\n" +
-    "                <td ng-if=\"[500].indexOf(orders.searchParam.policyStatus) !== -1\">{{order.refundUser}}</td>\n" +
+    "                <td ng-if=\"orders.showOrdersProp('brokerGroup')\" class=\"text-nowrap\">{{order.nickName}}</td>\n" +
+    "                <td ng-if=\"orders.showOrdersProp('brokerGroup')\" class=\"text-nowrap\">{{order.mobile}}</td>\n" +
+    "                <td ng-if=\"orders.showOrdersProp('contactGroup')\">{{order.carName}}</td>\n" +
+    "                <td ng-if=\"orders.showOrdersProp('contactGroup')\" class=\"text-nowrap\">{{order.carMobile}}</td>\n" +
+    "                <td ng-if=\"orders.showOrdersProp('quotesUser')\"><button class=\"btn btn-link\" ng-click=\"orders.findUser(order.quotesUserId)\">{{order.quotesUser}}</button></td>\n" +
+    "                <td ng-if=\"orders.showOrdersProp('underwriteUser')\"><button class=\"btn btn-link\" ng-click=\"orders.findUser(order.underwriteUserId)\">{{order.underwriteUser}}</button></td>\n" +
+    "                <td ng-if=\"orders.showOrdersProp('writerUser')\"><button class=\"btn btn-link\" ng-click=\"orders.findUser(order.writerUserId)\">{{order.writerUser || order.policyStatus == 200 && '系统' || ''}}</button></td>\n" +
+    "                <td ng-if=\"orders.showOrdersProp('offGroup')\">{{order.offUser ? '人工关闭' : '系统关闭'}}</td>\n" +
+    "                <td ng-if=\"orders.showOrdersProp('offGroup')\"><button class=\"btn btn-link\" ng-click=\"orders.findUser(order.offUserId)\">{{order.offUser}}</button></td>\n" +
+    "                <td ng-if=\"orders.showOrdersProp('refundGroup')\"><button class=\"btn btn-link\" ng-click=\"orders.findUser(order.refundUserId)\">{{order.refundUser}}</button></td>\n" +
     "                <td>\n" +
     "                    <button class=\"btn btn-link\" ng-click=\"orders.showDetail(order)\">查看</button>\n" +
     "                </td>\n" +
-    "                <td ng-if=\"[55, -200].indexOf(orders.searchParam.policyStatus) !== -1\">\n" +
+    "                <td ng-if=\"orders.showOrdersProp('followUpGroup')\">\n" +
     "                    <button class=\"btn btn-link\" ng-click=\"orders.followup(order)\">{{order.followUpStatus | orderFollowupStatus}}</button>\n" +
     "                </td>\n" +
-    "                <td ng-if=\"[55, -200].indexOf(orders.searchParam.policyStatus) !== -1\">{{order.followUpUser}}</td>\n" +
-    "                <td class=\"date-column\" ng-if=\"[55, -200].indexOf(orders.searchParam.policyStatus) !== -1\">{{order.followUpTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>\n" +
-    "                <td class=\"text-nowrap\" ng-if=\"[10,20,50,55,100,180,200,300,500,600, -200].indexOf(orders.searchParam.policyStatus) !== -1\">\n" +
-    "                    <button class=\"btn btn-link\" ng-click=\"orders.confirmPrice(order)\" ng-if=\"[10].indexOf(orders.searchParam.policyStatus) !== -1\">确定报价</button>\n" +
-    "                    <button class=\"btn btn-link\" ng-click=\"orders.failPrice(order)\" ng-if=\"[10].indexOf(orders.searchParam.policyStatus) !== -1\">报价失败</button>\n" +
-    "                    <button class=\"btn btn-link\" ng-click=\"orders.confirmUnderwrite(order)\" ng-if=\"[100].indexOf(orders.searchParam.policyStatus) !== -1\">核保通过</button>\n" +
-    "                    <button class=\"btn btn-link\" ng-click=\"orders.rejectUnderwrite(order)\" ng-if=\"[100].indexOf(orders.searchParam.policyStatus) !== -1\">核保不通过</button>\n" +
-    "                    <button class=\"btn btn-link\" ng-click=\"orders.confirmIssue(order)\" ng-if=\"[180].indexOf(orders.searchParam.policyStatus) !== -1\">已出单</button>\n" +
-    "\n" +
-    "                    <button class=\"btn btn-link\" ng-click=\"orders.refund(order)\" ng-if=\"[300].indexOf(orders.searchParam.policyStatus) !== -1\">退款</button>\n" +
-    "                    <button class=\"btn btn-link\" ng-click=\"orders.closeOrder(order)\" ng-if=\"[300].indexOf(orders.searchParam.policyStatus) !== -1\">关闭订单</button>\n" +
+    "                <td ng-if=\"orders.showOrdersProp('followUpGroup')\"><button class=\"btn btn-link\" ng-click=\"orders.findUser(order.followUpUserId)\">{{order.followUpUser}}</button></td>\n" +
+    "                <td class=\"date-column\" ng-if=\"orders.showOrdersProp('followUpGroup')\">{{order.followUpTime | date: 'yyyy-MM-dd HH:mm:ss'}}</td>\n" +
+    "                <td class=\"text-nowrap\" ng-if=\"orders.showOrdersProp('operate')\">\n" +
+    "                    <button class=\"btn btn-link\" ng-click=\"orders.confirmPrice(order)\" ng-if=\"orders.showOrdersProp('bTnPrice')\">确定报价</button>\n" +
+    "                    <button class=\"btn btn-link\" ng-click=\"orders.failPrice(order)\" ng-if=\"orders.showOrdersProp('bTnPrice')\">报价失败</button>\n" +
+    "                    <button class=\"btn btn-link\" ng-click=\"orders.confirmUnderwrite(order)\" ng-if=\"orders.showOrdersProp('bTnUnderwrite')\">核保通过</button>\n" +
+    "                    <button class=\"btn btn-link\" ng-click=\"orders.rejectUnderwrite(order)\" ng-if=\"orders.showOrdersProp('bTnUnderwrite')\">核保不通过</button>\n" +
+    "                    <button class=\"btn btn-link\" ng-click=\"orders.confirmIssue(order)\" ng-if=\"orders.showOrdersProp('bTnIssue')\">已出单</button>\n" +
+    "                    <button class=\"btn btn-link\" ng-click=\"orders.refund(order)\" ng-if=\"orders.showOrdersProp('bTnRefund')\">退款</button>\n" +
+    "                    <button class=\"btn btn-link\" ng-click=\"orders.closeOrder(order)\" ng-if=\"orders.showOrdersProp('bTnClose')\">关闭订单</button>\n" +
     "                    <button class=\"btn btn-link\" ng-click=\"orders.remark(order)\">备注</button>\n" +
     "                </td>\n" +
     "            </tr>\n" +
@@ -938,41 +1045,6 @@ module.run(["$templateCache", function($templateCache) {
     "<div>\n" +
     "    <dir-pagination-controls max-size=\"5\" direction-links=\"true\" boundary-links=\"false\" on-page-change=\"orders.search()\" class=\"pull-right\"></dir-pagination-controls>\n" +
     "</div>\n" +
-    "");
-}]);
-})();
-
-(function(module) {
-try { module = angular.module("templates"); }
-catch(err) { module = angular.module("templates", []); }
-module.run(["$templateCache", function($templateCache) {
-  "use strict";
-  $templateCache.put("src/app/welcome/welcome.tpl.html",
-    "<!-- 检查登录状态中 -->\n" +
-    "<div class=\"well welcome-msg\">\n" +
-    "    <h4>欢迎来到微易车险管理系统！</h4>\n" +
-    "    <p ng-if=\"welcome.userInfo.authed === 'UNKNOWN'\">检查登录状态中...</p>\n" +
-    "</div>\n" +
-    "<!-- 未登录 -->\n" +
-    "<form novalidate class=\"form-horizontal login-form center-block\" name=\"loginForm\" ng-if=\"welcome.userInfo.authed === 'FAIL'\">\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label class=\"control-label col-sm-2\" for=\"userName\">用户名：</label>\n" +
-    "        <div class=\"col-sm-10\">\n" +
-    "            <input type=\"text\" class=\"form-control\" id=\"userName\" ng-model=\"welcome.loginParam.userName\" required>\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <label class=\"control-label col-sm-2\" for=\"pwd\">密码：</label>\n" +
-    "        <div class=\"col-sm-10\">\n" +
-    "            <input type=\"password\" class=\"form-control\" id=\"pwd\" ng-model=\"welcome.loginParam.password\" required>\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "    <div class=\"form-group\">\n" +
-    "        <div class=\"col-sm-offset-2 col-sm-10\">\n" +
-    "            <button class=\"btn btn-default\" ng-click=\"welcome.doLogin(loginForm)\">登录</button>\n" +
-    "        </div>\n" +
-    "    </div>\n" +
-    "</form>\n" +
     "");
 }]);
 })();

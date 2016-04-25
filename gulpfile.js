@@ -1,5 +1,3 @@
-"use strict";
-
 var config = require('./build/build.config.js');
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
@@ -167,4 +165,29 @@ gulp.task('serve:dist', ['build:dist'], function() {
     notify: false,
     server: [config.dist]
   });
+});
+
+// 为了结合 ts ，写的task
+gulp.task('ts', function() {
+    return gulp.src(['**/*.ts'])
+        .pipe(typescript({
+            module: 'amd',
+            sourcemaps: true,
+            outDir: './',
+            targets: 'es5'
+        }))
+        .pipe(gulp.dest('./'));
+});
+gulp.task('auto-ts', ['ts'], function() {
+    gulp.watch('**/*.ts', function() {
+        gulp.src(['**/*.ts'])
+            .pipe(typescript({
+                module: 'amd',
+                sourcemaps: true,
+                outDir: './',
+                targets: 'es5'
+            }))
+            .on('error', console.log('watch ts error'))
+            .pipe(gulp.dest('./'));
+    });
 });

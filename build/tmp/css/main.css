@@ -62,9 +62,6 @@ form.ng-dirty .ng-invalid {
 .form-inline .form-group:nth-child(n+2) {
   margin-left: 20px; }
 
-.modal-order-detail h4 > button {
-  display: none; }
-
 .sidenav {
   position: absolute;
   width: 220px;
@@ -125,7 +122,8 @@ form.ng-dirty .ng-invalid {
 .log-list {
   padding: 10px; }
   .log-list > .list-item {
-    padding: 5px; }
+    padding: 5px;
+    word-break: break-word; }
   .log-list > .list-item:nth-child(n+2) {
     border-top: 1px solid #eee; }
 
