@@ -23,6 +23,19 @@
         </ul>
     </div>
 
+    <div ng-controller="repeatCtrl" class="bk-color-1">
+        <ul>
+            <li ng-repeat="x in data">
+                {{x}}
+            </li>
+        </ul>
+        <ul>
+            <li ng-repeat="obj in objDatas">
+                {{'name:' + obj.name + ' ; age:' + obj.age}}
+            </li>
+        </ul>
+    </div>
+
     <script>
         var app = angular.module('myApp', []);
         app.controller('myCtrl', function($scope) {
@@ -36,6 +49,27 @@
                 age: 23,
                 job: '前端攻城狮'
             }
+        });
+        app.controller('repeatCtrl', function($scope) {
+            $scope.data = ['1','1asdf','12','13','14','51','16','41','71','18','91','10'];
+            $scope.objDatas = [
+                {
+                    name: 'zhiu',
+                    age: 23
+                },
+                {
+                    name: 'qinuo',
+                    age: 1
+                },
+                {
+                    name: 'win',
+                    age: 1
+                },
+                {
+                    name: 'cust',
+                    age: 60
+                }
+            ]
         });
     </script>
 </body>
