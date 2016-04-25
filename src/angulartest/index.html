@@ -36,6 +36,10 @@
         </ul>
     </div>
 
+    <div ng-controller='directiveCtrl' class="bk-color-1 runoob-directive">
+
+    </div>
+
     <script>
         var app = angular.module('myApp', []);
         app.controller('myCtrl', function($scope) {
@@ -70,6 +74,16 @@
                     age: 60
                 }
             ]
+        });
+
+        app.directive('runoobDirective', function() {
+            return {
+                // E:只限元素名使用 ; A:只限属性使用 ; C:只限于类名使用 ; M:只限注释使用 ;
+                restrict: 'C',
+                template: '<h3>自定义指令，通过 app.directive 实现</h3>'
+            }
+        });
+        app.controller('directiveCtrl', function($scope) {
         });
     </script>
 </body>
