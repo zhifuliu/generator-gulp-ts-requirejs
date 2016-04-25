@@ -1,0 +1,15 @@
+#[submodule "src/bower_modules/zhifuliu"]
+#    path = src/bower_modules
+#    url = git@github.com:zhifuliu//zhifuliu.git
+# 只能添加同一个平台的子模块
+
+# 好像运行了一次后,就记住了第一次运行时 init 的子模块,现在一直只能添加 collect-front 子模块.
+# 还有一个问题: 开始一直没有初始化子模块成功,并更新不了,然后直接使用子模块命令,才提示了 bower_modules/ 在 gitignore 中,然后取消忽略,就初始化成功了
+
+[submodule "src/bower_modules/collect-node"]
+    path = src/bower_modules/collect-node
+    url = git@gitlab.com:zhifu.liu/collect-node.git
+
+[submodule "src/bower_modules/collect-front"]
+    path = src/bower_modules/collect-front
+    url = git@gitlab.com:zhifu.liu/collect-front.git

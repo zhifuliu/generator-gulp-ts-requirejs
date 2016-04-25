@@ -1,0 +1,40 @@
+root = true
+indent_style = space
+indent_size = 4
+
+
+# we recommend you to keep these unchanged
+end_if_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.md]
+trim_trailing_whitespace = false
+
+
+# editorConfig 文件使用 |N| 格式,目的是可以与 Python ConfigParser Library 兼容,但是允许在分段名中使用 "end". 分段名是全局路径,格式类似于 gitignore. 斜杠(/)作为路径分隔符,
+# 表示注释. 注释应该单独占一行.
+# editorConfig 文件使用 UTF-8格式\CRLF或者 LF 作为换行符
+
+# 通配符
+# * 匹配除 / 外的任意字符
+# ** 匹配任意字符串
+# ? 匹配任意单个字符
+# [name] 匹配name字符
+# [!name] 匹配非name字符
+# {s1, s2, s3} 匹配任意给定的字符串
+# 特殊字符可以用\转义,以使其不被认为是通配符
+
+# editorConfig 支持的属性
+# indent_style: tab 为 hard-tabs, space为soft-tabs
+# indent_size: 设置整数表示规定每级缩进的列数和 soft-tabs 的宽度(空格数).如果设定为 tab ,则会设置 tab_width 的值
+# tab_width: 设置整数用于指定代替 tab 的列数.默认值就是 indent_size 的值,一般不需要指定
+# end_of_line: 定义换行符,支持 lf, cr 和 crlf
+# charset: 编码格式
+# trim_trailing_whitespace: 设为 true 表示会除去换行行首的任意空白字符
+# insert_final_newline: 设为 true 表明使文件以一个空白行结尾
+# root: 表明是最顶层的配置文件,发现设为 true 时,才会停止查找 .editorConfig 文件
+
+
+# 属性名和属性值都是大小写不敏感的
