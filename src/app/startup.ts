@@ -10,5 +10,12 @@ class Application {
 //console.log(ng);
 var app = new Application();
 //ng.module('ngAppTs', []);
+//var app = ng.module('myApp', []);
+//app.controller('myCtrl', function($scope) {
+//    $scope.firstName = 'zhifu'
+//    $scope.lastName = 'liu';
+//});
+
+console.log($('#container').html());
 
 export = app;
