@@ -3,18 +3,24 @@
 <head>
     <meta charset="utf-8">
     <title>一个功能简单但是涵盖angular所有知识的demo工程</title>
+    <link rel="stylesheet" href="./css/style.css" media="screen" title="no title" charset="utf-8">
     <script src="./lib/angular-1.5.4.js"></script>
 </head>
 <body>
-    <div ng-controller="myCtrl">
+    <div ng-controller="myCtrl" class="bk-color-1">
      	<p>姓 : <input type="text" ng-model="lastName"></p>
      	<p>名 : <input type="text" ng-model="firstName"></p>
      	<h1>Hello {{firstName + ' ' + lastName}}</h1>
     </div>
 
-    <div ng-controller="myCtrl1">
+    <div ng-controller="myCtrl1" class="bk-color-2">
         <h2>myCtrl1:</h2>
         <h2 ng-bind="msg"></h2>
+        <ul>
+            <li>name:{{msgObject.name}}</li>
+            <li>age:{{msgObject.age}}</li>
+            <li>job:{{msgObject.job}}</li>
+        </ul>
     </div>
 
     <script>
@@ -25,6 +31,11 @@
         });
         app.controller('myCtrl1', function($scope) {
             $scope.msg = 'this page has a angular-app and two angular-controllers';
+            $scope.msgObject = {
+                name: 'zhifuliu',
+                age: 23,
+                job: '前端攻城狮'
+            }
         });
     </script>
 </body>
