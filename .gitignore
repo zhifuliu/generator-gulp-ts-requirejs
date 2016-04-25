@@ -3,6 +3,10 @@ node_modules/
 src/bower_modules/
 .idea/
 
+# build
+build/tmp/
+build/dist/
+
 # Don't track build output
 dist/
 
@@ -19,3 +23,4 @@ test/**/*.js.map
 !src/app/require.config.js
 !src/app/lib/*.js*
 !tset/require.config.js
+!src/angulartest/**/*.js
