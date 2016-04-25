@@ -1,0 +1,32 @@
+body {
+    min-width: 480px;
+}
+
+.content-body {
+  position: relative;
+  min-height: 700px;
+}
+
+.content-section {
+  margin: 20px 0;
+  .content-section-header {
+    padding: 10px 0;
+  }
+}
+
+
+.h-list > * {
+  display: inline-block;
+  margin: 0 10px 10px 0;
+}
+
+.l-with-nav {
+  margin-left: 220px;
+  padding: 0 20px;
+}
+
+@media (max-width: 970px) {
+  .l-with-nav {
+    margin-left: 43px;
+  }
+}

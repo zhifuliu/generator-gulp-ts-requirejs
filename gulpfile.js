@@ -1,113 +1,170 @@
-// Node modules
-var fs = require('fs'), vm = require('vm'), merge = require('deeply'), chalk = require('chalk'), es = require('event-stream');
+"use strict";
 
-// Gulp and plugins
-var gulp = require('gulp'), rjs = require('gulp-requirejs-bundler'), concat = require('gulp-concat'), clean = require('gulp-clean'),
-    replace = require('gulp-replace'), uglify = require('gulp-uglify'), htmlreplace = require('gulp-html-replace'), typescript = require('gulp-tsc'),
-    webServer = require('gulp-webserver'), gutil = require('gulp-util'), header = require('gulp-header'), rename = require('gulp-rename'),
-    exec = require('child_process').exec;
+var config = require('./build/build.config.js');
+var gulp = require('gulp');
+var $ = require('gulp-load-plugins')();
+var runSequence = require('run-sequence');
+var browserSync = require('browser-sync');
+var reload = browserSync.reload;
+var pkg = require('./package');
+var del = require('del');
+var _ = require('lodash');
 
-// WebServer
-gulp.task('web-server', ['auto-ts'], function() {
-    gulp.src('./src')
-        .pipe(webServer({
-            host: '0.0.0.0',
-            fallback: 'index.html',
-            livereload: {
-                enable: true,
-                port: 8001
-            },
-            directoryListing: true,
-            port: 1314
-        }));
+// optimize images and put them in the dist folder
+gulp.task('images', function() {
+  return gulp.src(config.images)
+    .pipe($.imagemin({
+      progressive: true,
+      interlaced: true
+    }))
+    .pipe(gulp.dest(config.dist + '/assets/images'))
+    .pipe($.size({
+      title: 'images'
+    }));
 });
 
-gulp.task('auto-ts', ['ts'], function(){
-    gulp.watch('**/*.ts', function() {
-        gulp.src(['**/*.ts'])
-            .pipe(typescript({
-                module: 'amd',
-                sourcemap: true,
-                outDir: './',
-                target: 'es5'
-            }))
-            .on('error', gutil.log)
-            .pipe(gulp.dest('./'));
-    });
+//generate angular templates using html2js
+gulp.task('templates', function() {
+  return gulp.src(config.tpl)
+    .pipe($.changed(config.tmp + '/js'))
+    .pipe($.html2js({
+      outputModuleName: 'templates',
+      base: 'client',
+      useStrict: true
+    }))
+    .pipe($.concat('templates.js'))
+    .pipe(gulp.dest(config.tmp + '/js'))
+    .pipe($.size({
+      title: 'templates'
+    }));
 });
 
-var requireJsRuntimeConfig = vm.runInNewContext(fs.readFileSync('src/app/require.config.js') + '; require;');
-requireJsOptimizerConfig = merge(requireJsRuntimeConfig, {
-    out: 'scripts.js',
-    baseUrl: './src',
-    name: 'app/startup',
-    paths: {
-        requireLib: 'bower_modules/requirejs/require'
-    },
-    include: [
-        'requireLib'
-    ],
-    insertRequire: ['app/startup'],
-    bundles: {
-    }
+//generate css files from scss sources
+gulp.task('sass', function() {
+  return gulp.src(config.mainScss)
+    .pipe($.sass())
+    .on('error', $.sass.logError)
+    .pipe(gulp.dest(config.tmp + '/css'))
+    .pipe($.size({
+      title: 'sass'
+    }));
 });
 
-
-// Compile all .ts files, producing .js and source map files alongside them
-gulp.task('ts', function() {
-    return gulp.src(['**/*.ts'])
-        .pipe(typescript({
-            module: 'amd',
-            sourcemap: true,
-            outDir: './',
-            target: 'es5'
-        }))
-        .pipe(gulp.dest('./'));
+//build files for creating a dist release
+gulp.task('build:dist', ['clean'], function(cb) {
+  // runSequence(['jshint', 'build', 'copy', 'copy:assets', 'images'], 'html', cb);
+  runSequence(['build', 'copy', 'copy:assets', 'images'], 'html', cb);
 });
 
-// Discovers all AMD dependencies, concatenates together all required .js files, minifies them
-gulp.task('js', ['ts'], function () {
-    return rjs(requireJsOptimizerConfig)
-        .pipe(uglify({ preserveComments: 'some' }))
-        .pipe(gulp.dest('./dist/'));
+//build files for development
+gulp.task('build', ['clean'], function(cb) {
+  runSequence(['sass', 'templates'], cb);
 });
 
-// Concatenates CSS files, rewrites relative paths to Bootstrap fonts, copies Bootstrap fonts
-gulp.task('css', function () {
-    var bowerCss = gulp.src('src/bower_modules/components-bootstrap/css/bootstrap.min.css')
-        .pipe(replace(/url\((')?\.\.\/fonts\//g, 'url($1fonts/')),
-        appCss = gulp.src('src/css/blog.css').pipe(replace(/url\((')?\.\.\/imgs\//g, 'url($1imgs/')),
-        postCss = gulp.src('src/css/post.css'),
-        combinedCss = es.concat(bowerCss, appCss, postCss).pipe(concat('css.css')),
-        fontFiles = gulp.src('./src/bower_modules/components-bootstrap/fonts/!*', { base: './src/bower_modules/components-bootstrap/' }),
-        imgFiles = gulp.src('./src/imgs/*', {base: './src/'}),
-        postFiles = gulp.src('./src/posts/**/*', {base: './src/'});
-    return es.concat(combinedCss, fontFiles, imgFiles, postFiles)
-        .pipe(gulp.dest('./dist/'));
-});
-
-// Copies index.html, replacing <script> and <link> tags to reference production URLs
+//generate a minified css files, 2 js file, change theirs name to be unique, and generate sourcemaps
 gulp.task('html', function() {
-    return gulp.src('./src/index.html')
-        .pipe(htmlreplace({
-            'css': 'css.css',
-            'js': 'scripts.js'
-        }))
-        .pipe(gulp.dest('./dist/'));
+  var assets = $.useref.assets({
+    searchPath: '{build/tmp,client}'
+  });
+
+  return gulp.src(config.index)
+    .pipe(assets)
+    .pipe($.sourcemaps.init())
+    .pipe($.if('**/*main.js', $.ngAnnotate()))
+    .pipe($.if('*.js', $.uglify({
+      mangle: false,
+    })))
+    .pipe($.if('*.css', $.csso()))
+    .pipe($.if(['**/*main.js', '**/*main.css'], $.header(config.banner, {
+      pkg: pkg
+    })))
+    .pipe($.rev())
+    .pipe(assets.restore())
+    .pipe($.useref())
+    .pipe($.revReplace())
+    .pipe($.if('*.html', $.minifyHtml({
+      empty: true
+    })))
+    .pipe($.sourcemaps.write())
+    .pipe(gulp.dest(config.dist))
+    .pipe($.size({
+      title: 'html'
+    }));
 });
 
-// Removes all files from ./dist/, and the .js/.js.map files compiled from .ts
-gulp.task('clean', function() {
-    var distContents = gulp.src('./dist/**/*', { read: false }),
-        generatedJs = gulp.src(['src/**/*.js', 'src/**/*.js.map', 'test/**/*.js', 'test/**/*.js.map'], { read: false })
-            .pipe(es.mapSync(function(data) {
-                // Include only the .js/.js.map files that correspond to a .ts file
-                return fs.existsSync(data.path.replace(/\.js(\.map)?$/, '.ts')) ? data : undefined;
-            }));
-    return es.merge(distContents, generatedJs).pipe(clean());
+//copy assets in dist folder
+gulp.task('copy:assets', function() {
+  return gulp.src(config.assets, {
+      dot: true
+    }).pipe(gulp.dest(config.dist + '/assets'))
+    .pipe($.size({
+      title: 'copy:assets'
+    }));
 });
 
-gulp.task('default', ['html', 'js', 'css'], function(callback) {
-    callback();
-    console.log('\nPlaced optimized files in ' + chalk.magenta('dist/\n'));
+//copy assets in dist folder
+gulp.task('copy', function() {
+  return gulp.src([
+      config.base + '/*',
+      '!' + config.base + '/*.html',
+      '!' + config.base + '/src'
+    ]).pipe(gulp.dest(config.dist))
+    .pipe($.size({
+      title: 'copy'
+    }));
+});
+
+//clean temporary directories
+gulp.task('clean', del.bind(null, [config.dist, config.tmp]));
+
+//lint files
+gulp.task('jshint', function() {
+  return gulp.src(config.js)
+    .pipe(reload({
+      stream: true,
+      once: true
+    }))
+    .pipe($.jshint())
+    .pipe($.jshint.reporter('jshint-stylish'))
+    .pipe($.if(!browserSync.active, $.jshint.reporter('fail')));
+});
+
+/* tasks supposed to be public */
+
+
+//default task
+gulp.task('default', ['serve']); //
+
+//run the server after having built generated files, and watch for changes
+gulp.task('serve', ['build'], function() {
+  browserSync({
+    port: config.port,
+    ui: {
+      port: config.uiPort
+    },
+    ghostMode: config.ghostMode,
+    notify: false,
+    logPrefix: pkg.name,
+    server: [config.tmp, 'client', 'server']
+  });
+
+  gulp.watch(config.index, reload);
+  gulp.watch(config.scss, ['sass', reload]);
+  // gulp.watch(config.js, ['jshint']);
+  gulp.watch(config.js, reload);
+  gulp.watch(config.tpl, ['templates', reload]);
+  gulp.watch(config.assets, reload);
+});
+
+//run the app packed in the dist folder
+gulp.task('serve:dist', ['build:dist'], function() {
+  browserSync({
+    port: config.port,
+    ghostMode: config.ghostMode,
+    ui: {
+      port: config.uiPort
+    },
+    notify: false,
+    server: [config.dist]
+  });
 });

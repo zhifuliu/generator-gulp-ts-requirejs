@@ -1,0 +1,15 @@
+<nav class="navbar navbar-inverse" ng-controller="HeaderCtrl as header">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" ui-sref="root.mgt.orders({status: 0})">
+        {{header.userInfo.user.company.name}}车险管理系统
+      </a>
+    </div>
+    <div>
+      <ul class="nav navbar-nav navbar-right" ng-if="header.userInfo.authed === 'SUCCESS'">
+        <li><a href="javascript:;"><span class="glyphicon glyphicon-user"></span> {{header.userInfo.user.userName}}</a></li>
+        <li><a href="javascript:;" ng-click="header.logout()"><span class="glyphicon glyphicon-log-out"></span> 安全退出</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>

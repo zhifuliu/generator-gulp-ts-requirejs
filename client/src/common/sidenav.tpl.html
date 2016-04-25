@@ -1,0 +1,6 @@
+<ul class="nav nav-pills nav-stacked" ng-controller="SidenavCtrl as sidenav">
+    <li ng-repeat="menu in sidenav.userInfo.menus" ui-sref-active="active">
+        <a ng-if="menu.statusCode !== -100" ui-sref="root.mgt.orders({status: menu.statusCode})"><span class="glyphicon glyphicon-th-list"></span><span class="hidden-xs hidden-sm"> {{menu.statusCode | orderStatus}}（{{menu.orderCount}}）</span></a>
+        <a ng-if="menu.statusCode === -100" ui-sref="root.mgt.accounts"><span class="glyphicon glyphicon-user"></span><span class="hidden-xs hidden-sm"> {{menu.menuName}}</span></a>
+    </li>
+</ul>

@@ -1,0 +1,21 @@
+.sidenav {
+  position: absolute;
+  width: 220px;
+  height: 100%;
+  overflow: hidden;
+  z-index: 20;
+
+  li {
+    white-space: nowrap;
+
+    span {
+      vertical-align: middle;
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  .sidenav {
+    width: 43px;
+  }
+}

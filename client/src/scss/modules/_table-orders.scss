@@ -1,0 +1,18 @@
+.table-orders {
+  tbody>tr:hover {
+    background-color: #BFD4E6;
+  }
+
+  th,
+  td {
+    @extend %text-center;
+  }
+
+  th {
+    white-space: nowrap;
+  }
+
+  .date-column {
+    min-width: 10rem;
+  }
+}

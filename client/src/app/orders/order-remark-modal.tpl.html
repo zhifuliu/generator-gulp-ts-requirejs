@@ -1,0 +1,15 @@
+<div class="modal-header">
+    <h3 class="modal-title">备注</h3>
+</div>
+<div class="modal-body">
+    <ng-include src="'src/app/orders/order-remark-list.tpl.html'" onload="theRemarkListContainer = orderRemark"></ng-include>
+</div>
+<div class="modal-footer">
+    <form novalidate name="formRemark">
+        <div class="form-group">
+            <textarea class="form-control remark-input" ng-model="orderRemark.remarks" rows="5" required="true"></textarea>
+        </div>
+    </form>
+    <button class="btn btn-primary" type="button" ng-click="orderRemark.confirm(formRemark)">添加备注</button>
+    <button class="btn btn-info" type="button" ng-click="$dismiss()">取消</button>
+</div>

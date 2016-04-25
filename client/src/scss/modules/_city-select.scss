@@ -1,0 +1,7 @@
+.city-select[readonly] {
+    cursor: auto;
+    .form-control {
+        pointer-events: none;
+        background-color: #eee;
+    }
+}

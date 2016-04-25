@@ -1,0 +1,11 @@
+<ul class="log-list">
+    <li class="list-item" ng-repeat="remark in theRemarkListContainer.remarkList">
+        <div class="row">
+            <span class="col-sm-4">账户：{{remark.userName}}</span>
+            <span class="col-sm-4 text-center">操作：添加备注</span>
+            <span class="col-sm-4 text-right">时间：{{remark.createDatetime | date: 'yyyy-MM-dd HH:mm:ss'}}</span>
+        </div>
+        <p ng-text-truncate="remark.content" ng-tt-chars-threshold="170" ng-tt-more-label=" 更多..." ng-tt-less-label=" 收起"></p>
+        <!-- <div>备注：{{remark.content}}</div> -->
+    </li>
+</ul>

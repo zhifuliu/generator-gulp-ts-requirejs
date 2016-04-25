@@ -1,0 +1,98 @@
+//@import 'normalize';
+// Fonts
+// html,
+// button,
+// input,
+// select,
+// textarea {
+//   font-family: 'Open Sans', sans-serif;
+// }
+// Defaults
+// html {
+//   @include font-size($base-root-size);
+//   line-height: 1.5;
+// }
+// ::-moz-selection {
+//   @include selection();
+// }
+// ::selection {
+//   @include selection();
+// }
+// ::-webkit-input-placeholder {
+//   @include placeholder();
+// }
+// ::-moz-placeholder {
+//   @include placeholder();
+// }
+// :-ms-input-placeholder {
+//   @include placeholder();
+// }
+// img.pure-img {
+//   display: inline;
+//   max-width: 60%;
+//   vertical-align: middle;
+// }
+// code {
+//   color: $red;
+// }
+// h3 {
+//   @include font-size(22);
+//   font-weight: normal;
+// }
+// .pure-menu.pure-menu-horizontal {
+//   background: $silver;
+// }
+// a {
+//   color: $blue;
+//   line-height: inherit;
+//   text-decoration: none;
+// }
+// a:focus,
+// a:hover {
+//   color: darken($blue, 9);
+// }
+// a.pure-button:focus,
+// a.pure-button:hover {
+//   color: #fff;
+// }
+// pre {
+//   code {
+//     display: block;
+//     padding: 0.5em;
+//     border-width: 1px;
+//     border-style: solid;
+//     border-color: $gray;
+//     background-color: $silver;
+//     color: $black;
+//   }
+// }
+// h4 {
+//   @include font-size(21);
+// }
+.nav .disabled > a,
+.btn.disabled,
+.btn[disabled] {
+  pointer-events: none;
+}
+
+ol, ul {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+// .btn-list {
+//   &> .btn-link {
+//     &:hover {
+//       text-decoration: none;
+//     }
+//     &.active {
+//       background-color: #337ab7;
+//       border-color: #337ab7;
+//       border-radius: 4px;
+//       color: #fff;
+//       // cursor: default;
+//       pointer-events: none;
+//     }
+//   }
+// }

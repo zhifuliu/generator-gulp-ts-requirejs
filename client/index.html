@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-Hans">
+
+<head>
+    <meta charset="utf-8">
+    <title>微易车险管理系统</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+    <!-- <link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/angular-ui-grid/3.0.7/ui-grid.min.css"> -->
+    <!-- build:css css/main.css -->
+    <link rel="stylesheet" type="text/css" href="src/common/vendor/angular-city-select.css" />
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <!-- endbuild -->
+</head>
+
+<body ng-app="csApp">
+    <div class="container alerts-container" ng-controller="AlertsCtrl as alerts">
+        <uib-alert ng-repeat="alert in alerts.items" type="{{alert.type}}" close="alerts.closeAlert($index)" dismiss-on-timeout="3500"><span ng-bind="alert.msg"></span></uib-alert>
+    </div>
+    <div class="container-fluid content-body" ui-view></div>
+    <!-- <footer ui-view="footer"></footer> -->
+    <script type="text/javascript" src="//cdn.bootcss.com/angular.js/1.4.8/angular.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/angular.js/1.4.8/i18n/angular-locale_zh-hans-cn.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/angular.js/1.4.8/angular-resource.min.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/angular.js/1.4.8/angular-cookies.min.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/angular.js/1.4.8/angular-sanitize.min.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/angular-ui-router/0.2.15/angular-ui-router.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/angular-ui-bootstrap/1.2.1/ui-bootstrap-tpls.min.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/angular-clipboard/1.3.0/angular-clipboard.min.js"></script>
+    <!-- <script type="text/javascript" src="//dn-cdnjscn.qbox.me/ajax/libs/angular-ui-grid/3.0.7/ui-grid.min.js"></script> -->
+    <!-- build:js js/main.js -->
+    <script type="text/javascript" src="src/common/vendor/angular-city-select.js"></script>
+    <script type="text/javascript" src="src/common/vendor/countdownTimer.js"></script>
+    <script type="text/javascript" src="src/common/vendor/dirPagination.js"></script>
+    <script type="text/javascript" src="src/common/vendor/ng-text-truncate.js"></script>
+    <script type="text/javascript" src="src/common/vendor/checklist-model.js"></script>
+    <script type="text/javascript" src="src/common/vendor/id-validator.min.js"></script>
+    <script type="text/javascript" src="src/app/app.js"></script>
+    <script type="text/javascript" src="src/app/accounts/accounts.js"></script>
+    <script type="text/javascript" src="src/app/welcome/welcome.js"></script>
+    <script type="text/javascript" src="src/app/orders/orders.js"></script>
+    <script type="text/javascript" src="src/app/orders/order-detail.js"></script>
+    <script type="text/javascript" src="src/common/interceptors/httpInterceptor.js"></script>
+    <script type="text/javascript" src="src/common/services/data-service.js"></script>
+    <script type="text/javascript" src="src/common/services/user-info.js"></script>
+    <script type="text/javascript" src="src/common/filters/filters-general.js"></script>
+    <script type="text/javascript" src="src/common/filters/filters-orders.js"></script>
+    <script type="text/javascript" src="src/common/filters/filters-customers.js"></script>
+    <script type="text/javascript" src="src/common/validators/validators-general.js"></script>
+    <script type="text/javascript" src="src/common/validators/validators-order.js"></script>
+    <script type="text/javascript" src="src/common/alerts.js"></script>
+    <script type="text/javascript" src="src/common/sidenav.js"></script>
+    <script type="text/javascript" src="src/common/header.js"></script>
+    <script type="text/javascript" src="js/templates.js"></script>
+    <!-- endbuild -->
+</body>
+
+</html>

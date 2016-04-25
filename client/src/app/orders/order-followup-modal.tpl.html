@@ -1,0 +1,21 @@
+<div class="modal-header">
+    <h3 class="modal-title">修改跟进状态</h3>
+</div>
+<div class="modal-body">
+    <form novalidate name="formFollowup">
+        <div class="form-group">
+            <label>跟进状态：</label>
+            <div class="btn-group text-cent">
+                <button class="btn btn-success" ng-model="orderFollowup.followUpStatus" uib-btn-radio="val*1" ng-repeat="(val, desc) in orderFollowup.orderFollowUpStatusEnum">{{desc}}</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>备注（可选）：</label>
+            <textarea class="form-control" ng-model="orderFollowup.remarks" rows="5"></textarea>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" type="button" ng-click="orderFollowup.confirm(formFollowup)">确定</button>
+    <button class="btn btn-info" type="button" ng-click="$dismiss()">取消</button>
+</div>
