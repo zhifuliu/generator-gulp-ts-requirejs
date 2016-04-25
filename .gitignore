@@ -2,7 +2,8 @@
 node_modules/
 src/bower_modules/
 .idea/
-.build/
+build/tmp
+build/dist
 
 # Don't track build output
 dist/
