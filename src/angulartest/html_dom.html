@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html ng-app="ngapp">
+<head>
+    <meta charset="utf-8">
+    <title>angular HTML DOM</title>
+    <link rel="stylesheet" href="./css/style.css" media="screen" title="no title" charset="utf-8">
+    <script src="./lib/angular-1.5.4.js"></script>
+</head>
+<body>
+    <div class="bk-color-1">
+        <pre>
+            angularJS 为 HTML DOM 元素的属性提供了绑定应用数据的指令
+            ng-disabled
+            ng-show
+            ng-hide
+        </pre>
+    </div>
+    <div class="bk-color-2" ng-controller="ctrl0">
+        <p>
+            ng-disabled: <br>
+            <button ng-disabled='mySwitch'>点击切换disabled状态</button><br>
+            <input type="checkbox" ng-model="mySwitch"><br>
+            <span>{{mySwitch}}</span>
+        </p>
+        <p>
+            ng-show: <br>
+            <label ng-show="true">可见</label><br>
+            <label ng-show="false">不可见</label><br>
+        </p>
+    </div>
+    <script>
+        var app = angular.module('ngapp', []);
+        app.controller('ctrl0', function($scope) {
+            $scope.mySwitch = true;
+        });
+    </script>
+</body>
+</html>
