@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html ng-app="ngapp">
+<head>
+    <meta charset="utf-8">
+    <title>angular API</title>
+    <link rel="stylesheet" href="./css/style.css" media="screen" title="no title" charset="utf-8">
+    <script src="./lib/angular-1.5.4.js"></script>
+</head>
+<body>
+    <div class="bk-color-1">
+        <pre>
+            AngularJS 全局 API 用于执行常见任务的 js 函数集合，如：比较对象、迭代对象、转换对象
+            全局API函数通过 angular 访问
+        </pre>
+    </div>
+    <div class="bk-color-2" ng-controller="ctrl0">
+        <p>
+            原数据:{{msg}}<br>
+            全局 API 转小写后的数据:{{lowercaseMsg}}
+        </p>
+    </div>
+    <script>
+        var app = angular.module('ngapp', []);
+        app.controller('ctrl0', function($scope) {
+            $scope.msg = 'zhiFU';
+            $scope.lowercaseMsg = angular.lowercase($scope.msg);
+        });
+    </script>
+</body>
+</html>
