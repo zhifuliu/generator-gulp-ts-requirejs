@@ -25,13 +25,13 @@
             {{serviceData}}
         </p>
         <p>
-            $timeout: 将在指定时间后执行操作(这个例子中是现实内容)---angular 1.5.4 不支持 timeout<br>
-            <!-- {{timeoutMsg}} -->
+            $timeout: 将在指定时间后执行操作(这个例子中是现实内容)---angular 1.5.4 不支持 timeout,不是不支持，而是我再controller中没有引入<br>
+            {{timeoutMsg}}
         </p>
     </div>
     <script>
         var app = angular.module('ngapp', []);
-        app.controller('ctrl0', function($scope, $location, $http) {
+        app.controller('ctrl0', function($scope, $location, $http, $timeout) {
             $scope.myUrl = $location.absUrl();
             $http
             .get('./data/http_service_demo.json').then(function(response) {
@@ -46,11 +46,11 @@
             //     console.log(response);
             // });
 
-            // $scope.timeoutMsg = '初始值'
-            // var timeoutValue = 2000;
-            // $timeout(function () {
-            //     $scope.timeoutMsg = timeoutValue +' ms 后的值';
-            // }, timeoutValue);
+            $scope.timeoutMsg = '初始值'
+            var timeoutValue = 2000;
+            $timeout(function () {
+                $scope.timeoutMsg = timeoutValue +' ms 后的值';
+            }, timeoutValue);
             // $timeout(function () {
             //     $scope.timeoutMsg = '2000 ms 后的值';
             // }, 2000);
