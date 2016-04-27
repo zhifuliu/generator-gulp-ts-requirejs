@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html ng-app="ngapp">
+<head>
+    <meta charset="utf-8">
+    <title>angular filter 过滤器 实验</title>
+    <link rel="stylesheet" href="./css/style.css" media="screen" title="no title" charset="utf-8">
+    <script src="./lib/angular-1.5.4.js"></script>
+</head>
+<body>
+    <div class="bk-color-1">
+        <pre>
+            AngularJS 应用可以创建自己的服务，可使用内建服务
+            在 angularJS 中，服务是一个函数或者对象，可在你的 AngularJS 应用中使用。内建服务有30多个。比如 $location 服务可以返回当前页面的url地址
+            注意：$location 服务是作为一个参数传入到 controller 中，如果要使用，需要在 controller 中定义
+            $http 服务用来想服务器发送请求，应用响应服务器传送过来的参数，angularJS 会一直监控应用，处理时间变化
+        </pre>
+        <br><br>
+    </div>
+    <div class="bk-color-2" ng-controller="ctrl0">
+        <p>
+            当前页面的 URL：{{myUrl}}
+        </p>
+        <p>
+            http 服务(browser-sync 应该能提供数据，新建 data 文件夹，放了一个 json 文件): <br>
+            {{serviceData}}
+        </p>
+        <p>
+            $timeout: 将在指定时间后执行操作(这个例子中是现实内容)---angular 1.5.4 不支持 timeout<br>
+            <!-- {{timeoutMsg}} -->
+        </p>
+    </div>
+    <script>
+        var app = angular.module('ngapp', []);
+        app.controller('ctrl0', function($scope, $location, $http) {
+            $scope.myUrl = $location.absUrl();
+            $http
+            .get('./data/http_service_demo.json').then(function(response) {
+                $scope.serviceData = response.data;
+                console.log(response);
+            })
+            // .success(function(response) {
+            //     console.log(response);
+            // });
+            // $http.get('./data/http_service_demo1.json').then(function(response) {
+            //     //$scope.serviceData = response.data;
+            //     console.log(response);
+            // });
+
+            // $scope.timeoutMsg = '初始值'
+            // var timeoutValue = 2000;
+            // $timeout(function () {
+            //     $scope.timeoutMsg = timeoutValue +' ms 后的值';
+            // }, timeoutValue);
+            // $timeout(function () {
+            //     $scope.timeoutMsg = '2000 ms 后的值';
+            // }, 2000);
+        });
+    </script>
+</body>
+</html>
