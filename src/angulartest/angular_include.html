@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html ng-app="ngapp">
+<head>
+    <meta charset="utf-8">
+    <title>angular 包含</title>
+    <link rel="stylesheet" href="./css/style.css" media="screen" title="no title" charset="utf-8">
+    <link rel="stylesheet" href="./lib/bootstrap.css" media="screen" title="no title" charset="utf-8">
+    <script src="./lib/angular-1.5.4.js"></script>
+</head>
+<body>
+    <div class="bk-color-1">
+        <pre>
+            在 html 中，目前不支持包含HTML文件的功能，服务端一般都支持了这个功能，在浏览器端，一般式通过 innerHTML 来实现。
+            在 angularJS 中，可以使用 ng-include 指令来包含 HTML 内容
+        </pre>
+    </div>
+    <div ng-controller="ctrl">
+        <!-- 注意：包含的文件还要用单引号包含 -->
+        <div ng-include="'./include/include1.html'"></div>
+        <div ng-include="'./include/include2.html'"></div>
+    </div>
+
+    <script type="text/javascript" src='./include/extend.js'></script>
+</body>
+</html>
