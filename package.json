@@ -1,4 +1,3 @@
-/* defines the packages and scripts we need */
 {
   "name": "generator-gulp-ts-requireJs",
   "version": "0.0.1",
